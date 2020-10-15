@@ -8,9 +8,13 @@ workflows:
   build:
     jobs:
       - build
-      # - deploy:
-      #     requires:
-      #       - build # only run deploy-via-git job if the build job has completed
+      - hold:
+          type: approval
+          requires:
+            - build
+      - deploy:
+          requires:
+            - hold # only run deploy-via-git job if the hold job has completed
 
 jobs:
       # Buil project
@@ -42,7 +46,9 @@ jobs:
           key: dependency-cache-{{checksum "package-lock.json"}}
           paths:
             - ./node_modules
-        
+      # # run test
+      # - run: npm test
+      # Sending notification
       - run:
           name: Sending notification
           when: on_success
@@ -52,6 +58,16 @@ jobs:
                 '{
                   "recipient":{
                     "id":"'$PSID_BOSS'"
+                  },
+                  "message":{
+                    "text":"✅✅✅Repository: '$CIRCLE_PROJECT_REPONAME' \n SUCCESSFULL 🍺🍺🍺 \n - Author: '$CIRCLE_USERNAME' \n - Branch: '$CIRCLE_BRANCH' \n - Pull request: '$CIRCLE_PULL_REQUEST' \n -> CI Detail: '$CIRCLE_BUILD_URL' "
+                  }
+                }' "https://graph.facebook.com/v2.6/me/messages?access_token=$PAGE_ACCESS_TOKEN" \
+
+                curl -X POST -H  "Content-Type: application/json" -d \
+                '{
+                  "recipient":{
+                    "id":"'$PSID_VIET'"
                   },
                   "message":{
                     "text":"✅✅✅Repository: '$CIRCLE_PROJECT_REPONAME' \n SUCCESSFULL 🍺🍺🍺 \n - Author: '$CIRCLE_USERNAME' \n - Branch: '$CIRCLE_BRANCH' \n - Pull request: '$CIRCLE_PULL_REQUEST' \n -> CI Detail: '$CIRCLE_BUILD_URL' "
@@ -66,20 +82,32 @@ jobs:
               curl -X POST -H  "Content-Type: application/json" -d \
                 '{
                   "recipient":{
+                    "id":"'$PSID_VIET'"
+                  },
+                  "message":{
+                    "text":"❌❌❌Repository: '$CIRCLE_PROJECT_REPONAME' \n FAIL 😭😭😭 \n - Author: '$CIRCLE_USERNAME' \n - Branch: '$CIRCLE_BRANCH' \n - Pull request: '$CIRCLE_PULL_REQUEST' \n -> CI Detail: '$CIRCLE_BUILD_URL' "
+                  }
+                }' "https://graph.facebook.com/v2.6/me/messages?access_token=$PAGE_ACCESS_TOKEN" \
+
+              curl -X POST -H  "Content-Type: application/json" -d \
+                '{
+                  "recipient":{
                     "id":"'$PSID_BOSS'"
                   },
                   "message":{
                     "text":"❌❌❌Repository: '$CIRCLE_PROJECT_REPONAME' \n FAIL 😭😭😭 \n - Author: '$CIRCLE_USERNAME' \n - Branch: '$CIRCLE_BRANCH' \n - Pull request: '$CIRCLE_PULL_REQUEST' \n -> CI Detail: '$CIRCLE_BUILD_URL' "
                   }
-                }' "https://graph.facebook.com/v2.6/me/messages?access_token=$PAGE_ACCESS_TOKEN"
+                }' "https://graph.facebook.com/v2.6/me/messages?access_token=$PAGE_ACCESS_TOKEN"                
             fi
-  #     # deploy in heroku
-  # deploy:
-  #   docker:
-  #     - image: circleci/node:8.11.1
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: Deploy Master to Heroku
-  #         command: |
-  #           git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master -f
+      # deploy in heroku
+  deploy:
+    docker:
+      - image: circleci/node:8.11.1
+    steps:
+      - checkout
+      - run:
+          name: Deploy Master to Heroku
+          command: |
+            if [ "$CIRCLE_BRANCH" == "master" ]; then
+              git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master -f
+            fi 

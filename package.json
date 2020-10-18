@@ -1,5 +1,5 @@
 {
-  "name": "project_sever_02",
+  "name": "lus-server",
   "version": "1.0.0",
   "description": "- Project name: Lovely - Language: Java Script - Framework: NodeJs - Group : VTNPlusD - Leader: Nguyen Ngoc Duy - Member: Tran Quoc Viet - Start date: 09/01/2020 - End date:",
   "main": "app.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/olololoe110399/project_sever_02.git"
+    "url": "git@github.com-olololoe:VTNPlusD/lus-sever.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/olololoe110399/project_sever_02/issues"
+    "url": "https://github.com/VTNPlusD/lus-sever/issues"
   },
-  "homepage": "https://github.com/olololoe110399/project_sever_02#readme",
+  "homepage": "https://github.com/VTNPlusD/lus-sever#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",

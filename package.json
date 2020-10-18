@@ -4,6 +4,10 @@
   "description": "- Project name: Lovely - Language: Java Script - Framework: NodeJs - Group : VTNPlusD - Leader: Nguyen Ngoc Duy - Member: Tran Quoc Viet - Start date: 09/01/2020 - End date:",
   "main": "app.js",
   "scripts": {
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Note: test in here\" && exit 1",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
@@ -32,5 +36,4 @@
     "swagger-jsdoc": "^4.3.0",
     "swagger-ui-express": "^4.1.4",
     "uuid": "^8.3.0"
-  }
 }

@@ -1,4 +1,6 @@
+// Use dotenv to read .env vars into Node
 require("dotenv").config();
+// Constants
 const express = require("express"),
   bodyParser = require("body-parser"),
   PORT = process.env.PORT,
@@ -68,6 +70,10 @@ io.on("connection", (socket) => {
     );
   });
 });
+
+// configure body-parser
+app.use(bodyParser.json({ limit: "50mb" })); // parse form data client
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // app entry point
 app.get("/", (req, res) =>

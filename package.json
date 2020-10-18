@@ -1,7 +1,7 @@
 {
-  "name": "lus-sever",
+  "name": "project_sever_02",
   "version": "1.0.0",
-  "description": "",
+  "description": "- Project name: Lovely - Language: Java Script - Framework: NodeJs - Group : VTNPlusD - Leader: Nguyen Ngoc Duy - Member: Tran Quoc Viet - Start date: 09/01/2020 - End date:",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -9,14 +9,28 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com-olololoe:VTNPlusD/lus-sever.git"
+    "url": "git+https://github.com/olololoe110399/project_sever_02.git"
   },
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/olololoe110399/project_sever_02/issues"
+  },
+  "homepage": "https://github.com/olololoe110399/project_sever_02#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "crypto-random-string": "^3.3.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "nodemon": "^2.0.5"
+    "express-validator": "^6.6.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.3",
+    "nodemailer": "^6.4.11",
+    "nodemon": "^2.0.4",
+    "socket.io": "^2.3.0",
+    "swagger-jsdoc": "^4.3.0",
+    "swagger-ui-express": "^4.1.4",
+    "uuid": "^8.3.0"
   }
 }

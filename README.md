@@ -1,1 +1,1 @@
-# lus-sever
+# lus-server

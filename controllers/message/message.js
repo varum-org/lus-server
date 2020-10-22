@@ -12,6 +12,11 @@ exports.loadAllRoom = async (req, res) => {
   const getRoom1 = await Room.find(filter1);
   const getRoom2 = await Room.find(filter2);
 
+  if (getRoom1.length == 0 && getRoom2.length == 0) {
+    const msg = "User don't have any room chat";
+    return handleFailed(res, msg);
+  }
+
   let roomArr = [];
 
   if (getRoom1) {
@@ -41,7 +46,7 @@ exports.loadAllRoom = async (req, res) => {
     }
   }, Object.create(null));
 
-  res.json(result);
+  return res.json(result);
 };
 
 //Check room by userIdSend and userIdReceive

@@ -10,7 +10,7 @@ const {
   requireEmailRegister,
   requireVerifyCode,
   requirePasswordRegister,
-  requireEmail,
+  requireId,
 } = require("../controllers/user/validators");
 const {
   requireUserId,
@@ -20,6 +20,10 @@ const {
   requireIdolIdCart,
   requireUserIdCart,
 } = require("../controllers/cart/validators");
+const {
+  requireUserIdSendMess,
+  requireUserIdReceiveMess,
+} = require("../controllers/message/validators");
 const { handleErrors } = require("../controllers/user/middleware");
 const verify_token = require("../config/verify_token");
 
@@ -45,8 +49,9 @@ router.post(
 );
 router.post(
   "/user/information",
-  handleErrors(),
   verify_token,
+  [requireId],
+  handleErrors(),
   controllerApiUser.userInfomation
 );
 
@@ -64,6 +69,8 @@ router.post(
 router.post(
   "/message/createRoom",
   verify_token,
+  [requireUserIdSendMess, requireUserIdReceiveMess],
+  handleErrors(),
   controllerApiMessage.createRoom
 );
 router.post(

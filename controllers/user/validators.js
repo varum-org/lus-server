@@ -57,4 +57,12 @@ module.exports = {
         throw new Error("Invalid Code");
       }
     }),
+  requireId: check("id")
+    .trim()
+    .isLength({ min: 1 })
+    .custom(async (id) => {
+      if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+        throw new Error("id not match!");
+      }
+    }),
 };

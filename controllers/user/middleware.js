@@ -39,6 +39,14 @@ module.exports = {
       messages: mess,
     });
   },
+  handleMail(res, msg) {
+    return res.json({
+      success: true,
+      data: {},
+      status_code: 200,
+      messages: msg,
+    });
+  },
   handleFailed(res, mess, code) {
     return res.json({
       success: false,

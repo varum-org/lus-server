@@ -1,8 +1,5 @@
 const nodemailer = require("nodemailer");
-const {
-  handleSuccess,
-  handleFailed,
-} = require("../controllers/user/middleware");
+const { handleMail, handleFailed } = require("../controllers/user/middleware");
 
 exports.sendEmail = async (email, res, user, code) => {
   let mailTransporter = nodemailer.createTransport({
@@ -25,7 +22,7 @@ exports.sendEmail = async (email, res, user, code) => {
       handleFailed(res, err, 500);
     } else {
       const mess = `Verification code has been sent to email ${email} successfully`;
-      handleSuccess(res, user, mess);
+      handleMail(res, mess);
     }
   });
 };

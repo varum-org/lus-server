@@ -1,0 +1,557 @@
+openapi: 3.0.1
+info:
+  title: Lus API with Swagger
+  description: >-
+    Lus CRUD API application made with Express and documented with Swagger
+  contact:
+    name: VTNPlusD Team
+    url: 'https://bee-bot-1001.herokuapp.com/'
+    email: vtnplusd@gmail.com
+  license:
+    name: MIT
+    url: 'https://bee-bot-1001.herokuapp.com/'
+  version: 1.0.0
+servers:
+  - url: 'http://0.0.0.0:5000/api/v1'
+  - url: 'https://lus-sever.herokuapp.com/api/v1'
+tags:
+  - name: User
+    description: API to manage User.  
+  - name: Message
+    description: API to manage Message.
+  - name: Idol
+    description: API to manage Idol.   
+  - name: Cart
+    description: API to manage Cart.      
+paths:
+   /user/login:
+    post:
+      description: Use to login
+      tags: [User]
+      parameters:
+        - in: body
+          name: user
+          description: The user to login
+          schema:
+            type: object
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+      responses:
+        '200':
+          description: A successful response!
+        '500':
+          description: A failure response!
+   /user/register:
+    post:
+      description: Use to Register
+      tags: [User]
+      parameters:
+        - in: body
+          name: user
+          description: The user to create
+          schema:
+            type: object
+            required:
+              - email
+              - password
+              - user_name
+              - phone
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+              user_name:
+                type: string
+              phone:
+                type: number
+      responses:
+        '200':
+          description: A successful response!
+        '500':
+          description: A failure response!
+   /user/verify_email:
+    post:
+      description: Verify email to register
+      tags: [User]
+      parameters:
+        - in: body
+          name: user
+          description: Verify email to register
+          schema:
+            type: object
+            required:
+              - email
+            properties:
+              email:
+                type: string
+      responses:
+        '200':
+          description: A successful response!
+        '500':
+          description: A failure response!
+   /user/information:
+    post:
+      security:
+        - bearerAuth: []
+      description: Get user information
+      tags: [User]
+      parameters:
+        - in: body
+          name: user
+          description: Verify email to register
+          schema:
+            type: object
+            required:
+              - id
+            properties:
+              id:
+                type: string
+      responses:
+        '200':
+          description: A successful response!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: A Failure response!
+   /message/loadAllRoom:
+    post:
+      security:
+        - bearerAuth: []
+      description: Load all room chat
+      tags: [Message]
+      parameters:
+        - in: body
+          name: Message
+          description: Load all room chat
+          schema:
+            type: object
+            required:
+              - userId
+            properties:
+              userId:
+                type: string
+      responses:
+        '200':
+          description: A successful response!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: A Failure response!
+   /message/checkRoomAvailable:
+    post:
+      security:
+        - bearerAuth: []
+      description: Check room chat
+      tags: [Message]
+      parameters:
+        - in: body
+          name: Message
+          description: Check room chat
+          schema:
+            type: object
+            required:
+              - userIdSend
+              - userIdReceive
+            properties:
+              userIdSend:
+                type: string
+              userIdReceive:
+                type: string
+      responses:
+        '200':
+          description: A successful response!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: A Failure response!
+   /message/createRoom:
+    post:
+      security:
+        - bearerAuth: []
+      description: Create room chat
+      tags: [Message]
+      parameters:
+        - in: body
+          name: Message
+          description: Create room chat
+          schema:
+            type: object
+            required:
+              - userIdSend
+              - userIdReceive
+            properties:
+              userIdSend:
+                type: string
+              userIdReceive:
+                type: string
+      responses:
+        '200':
+          description: A successful response!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/UnauthorizedError'
+   /message/detail:
+    post:
+      security:
+        - bearerAuth: []
+      description: Message detail for room chat
+      tags: [Message]
+      parameters:
+        - in: body
+          name: Message
+          description: Message detail for room chat
+          schema:
+            type: object
+            required:
+              - roomId
+            properties:
+              roomId:
+                type: string
+      responses:
+        '200':
+          description: A successful response!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/UnauthorizedError'
+   /idol/register:
+    post:
+      security:
+        - bearerAuth: []
+      description: Register Idol
+      tags: [Idol]
+      parameters:
+        - in: body
+          name: Idol
+          description: Register Idol
+          schema:
+            type: object
+            required:
+              - user_id
+              - nick_name
+              - address
+              - relationship
+              - description
+              - image_gallery
+            properties:
+              user_id:
+                type: string
+              nick_name:
+                type: string
+              address:
+                type: string
+              relationship:
+                type: string
+              description:
+                type: string
+              image_gallery:
+                type: array
+                items:
+                  type: string
+      responses:
+        '200':
+          description: A successful response!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/UnauthorizedError'
+   /idol/update:
+    post:
+      security:
+        - bearerAuth: []
+      description: Update Idol information
+      tags: [Idol]
+      parameters:
+        - in: body
+          name: Idol
+          description: Update Idol information
+          schema:
+            type: object
+            required:
+              - user_id
+              - nick_name
+              - address
+              - relationship
+              - description
+              - image_gallery
+            properties:
+              user_id:
+                type: string
+              nick_name:
+                type: string
+              address:
+                type: string
+              relationship:
+                type: string
+              description:
+                type: string
+              image_gallery:
+                type: array
+                items:
+                  type: string
+      responses:
+        '200':
+          description: A successful response!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/UnauthorizedError'
+   /cart/list:
+    post:
+      security:
+        - bearerAuth: []
+      description: List Cart
+      tags: [Cart]
+      parameters:
+        - in: body
+          name: Cart
+          description: List Cart
+          schema:
+            type: object
+            required:
+              - user_id
+            properties:
+              user_id:
+                type: string
+      responses:
+        '200':
+          description: A successful response!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/UnauthorizedError'
+   /cart/add:
+    post:
+      security:
+        - bearerAuth: []
+      description: Add Idol to Cart
+      tags: [Cart]
+      parameters:
+        - in: body
+          name: Cart
+          description: Add Idol to Cart
+          schema:
+            type: object
+            required:
+              - user_id
+              - idol_id
+            properties:
+              user_id:
+                type: string
+              idol_id:
+                type: string
+      responses:
+        '200':
+          description: A successful response!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: Idol not available!
+   /cart/delete:
+    post:
+      security:
+        - bearerAuth: []
+      description: Delete Idol from Cart
+      tags: [Cart]
+      parameters:
+        - in: body
+          name: Cart
+          description: Delete Idol from Cart
+          schema:
+            type: object
+            required:
+              - user_id
+              - idol_id
+            properties:
+              user_id:
+                type: string
+              idol_id:
+                type: string
+          required: true
+      responses:
+        '200':
+          description: A successful response!
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: Idol not available!
+components:
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+  schemas:
+    Cart:
+      required:
+        - user_id
+        - idol_id
+      type: object
+      properties:
+        user_id:
+          type: string
+        idol_id:
+          type: string
+      xml:
+        name: Cart
+    Message:
+      type: object
+      properties:
+        roomId:
+          type: string
+        userIdSend:
+          type: string
+        userIdReceive:
+          type: string
+        content:
+          type: string
+      xml:
+        name: Message
+    Room:
+      type: object
+      properties:
+        userIdSend:
+          type: string
+        userNameSend:
+          type: string
+        userIdReceive:
+          type: string
+        userNameReceive:
+          type: string
+        roomId:
+          type: string
+      xml:
+        name: Room
+    Idol:
+      required:
+        - user_id
+        - nick_name
+        - image_gallery
+      type: object
+      properties:
+        user_id:
+          type: string
+        nick_name:
+          type: string
+        address:
+          type: string
+        relationship:
+          type: string
+        status:
+          type: integer
+          default: 1
+          format: int32
+        description:
+          type: string
+        image_gallery:
+          type: array
+          xml:
+            name: image_gallery
+            wrapped: true
+          items:
+            type: string
+        rent_time_total:
+          type: string
+          default: 0
+        rating_total:
+          type: integer
+          default: 0
+          format: int32
+        rating:
+          type: integer
+          default: 0
+          format: int32
+        rent_total:
+          type: integer
+          default: 0
+          format: int32
+        rent_total_accepted:
+          type: integer
+          default: 0
+          format: int32
+        completion_rate:
+          type: integer
+          default: 0
+          format: int32
+      xml:
+        name: Idol
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          default: null
+        password:
+          type: string
+          default: null
+        user_name:
+          type: string
+          default: null
+        phone:
+          type: string
+          default: null
+        gender:
+          type: string
+          default: null
+        birthday:
+          type: string
+          default: null
+        address:
+          type: string
+          default: null
+        role_id:
+          type: integer
+          default: 1
+          description: (Admin, Idol, User)
+          format: int32
+        image_path:
+          type: string
+          default: null
+        device_token:
+          type: string
+          default: null
+        confirm_email_code:
+          type: string
+          default: null
+        confirm_email_expires:
+          type: string
+          default: null
+          format: date-time
+        created_date:
+          type: string
+          default: Date.now()
+          format: date-time
+      xml:
+        name: User
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      name: Authorization
+      scheme: bearer
+      bearerFormat: JWT

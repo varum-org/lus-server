@@ -48,7 +48,7 @@ module.exports = {
     });
   },
   handleFailed(res, mess, code) {
-    return res.json({
+    return res.status(code).json({
       success: false,
       data: {},
       status_code: code,

@@ -1,8 +1,37 @@
 /**
  * @swagger
+ * tags: 
+ *  name: User
+ *  description: API to manage User.   
+ */
+
+ /**
+ * @swagger
+ * tags: 
+ *  name: Message
+ *  description: API to manage Message.   
+ */
+
+ /**
+ * @swagger
+ * tags: 
+ *  name: Idol
+ *  description: API to manage Idol.   
+ */
+
+ /**
+ * @swagger
+ * tags: 
+ *  name: Cart
+ *  description: API to manage Cart.   
+ */
+
+/**
+ * @swagger
  * /api/v1/user/login:
  *  post:
  *    description: Use to login
+ *    tags: [User]
  *    parameters:
  *      - in: body
  *        name: user
@@ -29,6 +58,7 @@
  * /api/v1/user/register:
  *  post:
  *    description: Use to Register
+ *    tags: [User]
  *    parameters:
  *      - in: body
  *        name: user
@@ -61,6 +91,7 @@
  * /api/v1/user/verify_email:
  *  post:
  *    description: Verify email to register
+ *    tags: [User]
  *    parameters:
  *      - in: body
  *        name: user
@@ -84,6 +115,7 @@
  * /api/v1/user/information:
  *  post:
  *    description: Get user information
+ *    tags: [User]
  *    parameters:
  *      - in: body
  *        name: user
@@ -113,6 +145,7 @@
  * /api/v1/message/loadAllRoom:
  *  post:
  *    description: Load all room chat
+ *    tags: [Message]
  *    parameters:
  *      - in: body
  *        name: Message
@@ -142,6 +175,7 @@
  * /api/v1/message/checkRoomAvailable:
  *  post:
  *    description: Check room chat
+ *    tags: [Message]
  *    parameters:
  *      - in: body
  *        name: Message
@@ -174,6 +208,7 @@
  * /api/v1/message/createRoom:
  *  post:
  *    description: Create room chat
+ *    tags: [Message]
  *    parameters:
  *      - in: body
  *        name: Message
@@ -204,6 +239,7 @@
  * /api/v1/message/detail:
  *  post:
  *    description: Message detail for room chat
+ *    tags: [Message]
  *    parameters:
  *      - in: body
  *        name: Message
@@ -231,6 +267,7 @@
  * /api/v1/idol/register:
  *  post:
  *    description: Register Idol
+ *    tags: [Idol]
  *    parameters:
  *      - in: body
  *        name: Idol
@@ -275,6 +312,7 @@
  * /api/v1/idol/update:
  *  post:
  *    description: Update Idol information
+ *    tags: [Idol]
  *    parameters:
  *      - in: body
  *        name: Idol
@@ -319,6 +357,7 @@
  * /api/v1/cart/list:
  *  post:
  *    description: List Cart
+ *    tags: [Cart]
  *    parameters:
  *      - in: body
  *        name: Cart
@@ -346,6 +385,7 @@
  * /api/v1/cart/add:
  *  post:
  *    description: Add Idol to Cart
+ *    tags: [Cart]
  *    parameters:
  *      - in: body
  *        name: Cart
@@ -378,6 +418,7 @@
  * /api/v1/cart/delete:
  *  post:
  *    description: Delete Idol from Cart
+ *    tags: [Cart]
  *    parameters:
  *      - in: body
  *        name: Cart

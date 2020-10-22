@@ -5,12 +5,26 @@ const IdolSchema = new mongose.Schema({
     type: String,
     required: true,
   },
-  status: {
+  nick_name: {
     type: String,
-    default: "active",
+    required: true,
+  },
+  address: {
+    type: String,
+  },
+  relationship: {
+    type: String,
+  },
+  status: {
+    type: Number,
+    default: 0,
   },
   description: {
     type: String,
+  },
+  image_gallery: {
+    type: Array,
+    required: true,
   },
   rent_time_total: {
     type: Number,

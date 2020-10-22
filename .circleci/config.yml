@@ -8,13 +8,9 @@ workflows:
   build:
     jobs:
       - build
-      - hold:
-          type: approval
-          requires:
-            - build
       - deploy:
           requires:
-            - hold # only run deploy-via-git job if the hold job has completed
+            - build # only run deploy-via-git job if the hold job has completed
 
 jobs:
       # Buil project

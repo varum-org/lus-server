@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const controllerApiUser = require("../controllers/user/user");
 const controllerApiMessage = require("../controllers/message/message");
+const controllerIdol = require("../controllers/idol/idol");
+const controllerCart = require("../controllers/cart/cart");
 const {
   requireEmailLogin,
   requirePasswordLogin,
@@ -10,6 +12,14 @@ const {
   requirePasswordRegister,
   requireEmail,
 } = require("../controllers/user/validators");
+const {
+  requireUserId,
+  requireNickName,
+} = require("../controllers/idol/validatiors");
+const {
+  requireIdolIdCart,
+  requireUserIdCart,
+} = require("../controllers/cart/validators");
 const { handleErrors } = require("../controllers/user/middleware");
 const verify_token = require("../config/verify_token");
 
@@ -60,4 +70,43 @@ router.post(
   "/message/detail",
   verify_token,
   controllerApiMessage.messageDetail
+);
+
+// Idol
+router.post(
+  "/idol/register",
+  verify_token,
+  [requireUserId, requireNickName],
+  handleErrors(),
+  controllerIdol.register
+);
+router.post(
+  "/idol/update",
+  verify_token,
+  [requireUserId, requireNickName],
+  handleErrors(),
+  controllerIdol.update
+);
+
+// Cart
+router.post(
+  "/cart/list",
+  [requireUserIdCart],
+  handleErrors(),
+  verify_token,
+  controllerCart.list
+);
+router.post(
+  "/cart/add",
+  [requireUserIdCart, requireIdolIdCart],
+  handleErrors(),
+  verify_token,
+  controllerCart.add
+);
+router.post(
+  "/cart/delete",
+  [requireUserIdCart, requireIdolIdCart],
+  handleErrors(),
+  verify_token,
+  controllerCart.delete
 );

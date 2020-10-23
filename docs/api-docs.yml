@@ -30,25 +30,7 @@ paths:
     post:
       description: Use to login
       tags: [User]
-      requestBody:
-        description: Optional description in *Markdown*
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-          text/plain:
-            schema:
-              $ref: '#/components/schemas/User'
       parameters:
-        - in: header
-          name: 
         - in: body
           name: user
           description: The user to login

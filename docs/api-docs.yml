@@ -12,8 +12,10 @@ info:
     url: 'https://bee-bot-1001.herokuapp.com/'
   version: 1.0.0
 servers:
-  - url: 'http://0.0.0.0:5000/api/v1'
-  - url: 'https://lus-sever.herokuapp.com/api/v1'
+  - url: http://0.0.0.0:5000/api/v1
+    description: Local server (uses test data)
+  - url: http://lus-sever.herokuapp.com/api/v1
+    description: Production server (uses live data)
 tags:
   - name: User
     description: API to manage User.  
@@ -28,7 +30,25 @@ paths:
     post:
       description: Use to login
       tags: [User]
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          text/plain:
+            schema:
+              $ref: '#/components/schemas/User'
       parameters:
+        - in: header
+          name: 
         - in: body
           name: user
           description: The user to login

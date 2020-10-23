@@ -5,15 +5,13 @@ const express = require("express"),
   bodyParser = require("body-parser"),
   PORT = process.env.PORT,
   HOST = process.env.HOST,
-  app = express();
-
-const swaggerUi = require("swagger-ui-express");
-const swaggerJsDoc = require("swagger-jsdoc");
-
-const mongose = require("mongoose");
-const Message = require("./models/message.js");
-var http = require("http").createServer(app);
-var io = require("socket.io")(http);
+  app = express(),
+  swaggerUi = require("swagger-ui-express"),
+  mongose = require("mongoose"),
+  Message = require("./models/message.js"),
+  http = require("http").createServer(app),
+  io = require("socket.io")(http),
+  YAML = require('yamljs');
 
 // configure body-parser
 app.use(bodyParser.json({ limit: "50mb" })); // parse form data client
@@ -86,21 +84,8 @@ app.get("/", (req, res) =>
 app.use("/api/v1", require("./routes/api.js"));
 
 // Swagger
-const swaggerOptions = {
-  swaggerDefinition: {
-    info: {
-      title: "Lus API",
-      description: "Lus API Information",
-      contact: {
-        name: "VTNPlusD Team",
-      },
-      services: ["http://localhost:3000"],
-    },
-  },
-  apis: ["api-docs.js"],
-};
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+const swaggerDocument = YAML.load('./docs/api-docs.yml');
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Setup a default catch-all route that sends back a welcome message in JSON format.
 app.get("*", (req, res) =>

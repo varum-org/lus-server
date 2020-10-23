@@ -30,8 +30,8 @@
     "nodemailer": "^6.4.11",
     "nodemon": "^2.0.4",
     "socket.io": "^2.3.0",
-    "swagger-jsdoc": "^4.3.0",
     "swagger-ui-express": "^4.1.4",
-    "uuid": "^8.3.0"
+    "uuid": "^8.3.0",
+    "yamljs": "^0.3.0"
   }
 }

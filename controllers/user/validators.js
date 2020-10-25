@@ -37,7 +37,7 @@ module.exports = {
     .withMessage("Must be a valid email")
     .custom(async (email) => {
       const existingUser = await User.findOne({ email: email });
-      if (existingUser) {
+      if (existingUser && existingUser.email_active == 1) {
         throw new Error("Email in use!");
       }
     }),
@@ -45,18 +45,37 @@ module.exports = {
     .trim()
     .isLength({ min: 6, max: 20 })
     .withMessage("Password must be between 6 and 20 characters"),
-  requireVerifyCode: check("confirm_email_code")
+  requireUserNameRegister: check("user_name")
     .trim()
-    .custom(async (confirm_email_code, { req }) => {
-      const user = await User.findOne({ _id: req.body.id });
-      if (!user) {
-        throw new Error(`Id not found!`);
-      } else if (user.confirm_email_expires < Date.now()) {
-        throw new Error("Verification code has expired");
-      } else if (user.confirm_email_code != confirm_email_code) {
-        throw new Error("Invalid Code");
+    .isLength({ min: 6, max: 55 })
+    .withMessage("Username must be between 6 and 55 characters"),
+  requirePhoneRegister: check("phone")
+    .trim()
+    .isNumeric()
+    .withMessage("Phone must be a number")
+    .custom(async (phone) => {
+      if (phone.length < 10 || phone.length > 11) {
+        throw new Error("Phone must be 10 or 11 character");
       }
     }),
+  requireVerifyEmail: check("email")
+    .trim()
+    .custom(async (email) => {
+      const userArr = await User.find({ email: email });
+      for (const key of userArr) {
+        if (key.email_active == 1) {
+          throw new Error("Email in use");
+        }
+      }
+    }),
+  requireEmailCode: check("email_code")
+    .trim()
+    .custom(async (email_code) => {
+      if (!email_code) {
+        throw new Error("email_code invalid");
+      }
+    }),
+
   requireId: check("id")
     .trim()
     .isLength({ min: 1 })

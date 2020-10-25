@@ -41,13 +41,21 @@ const UserSchema = new mongose.Schema({
     type: String,
     default: null,
   },
-  confirm_email_code: {
+  email_active: {
+    type: Number,
+    default: 0,
+  },
+  email_code: {
     type: String,
     default: null,
   },
-  confirm_email_expires: {
+  email_code_expires: {
     type: Date,
     default: null,
+  },
+  phone_active: {
+    type: Number,
+    default: 0,
   },
   created_date: {
     type: Date,

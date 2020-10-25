@@ -1,4 +1,5 @@
 const { check } = require("express-validator");
+const Service = require("../../models/service");
 
 module.exports = {
   requireUserId: check("user_id")
@@ -14,4 +15,41 @@ module.exports = {
     .trim()
     .isLength({ min: 1, max: 20 })
     .withMessage("nick_name must be between 1 and 20 characters"),
+  requireAddress: check("address")
+    .trim()
+    .isLength({ min: 1, max: 20 })
+    .withMessage("address must be between 1 and 20 characters"),
+  requireImageGallery: check("image_gallery")
+    .isArray()
+    .withMessage("image_gallery invalid format")
+    .custom(async (image_gallery) => {
+      if (image_gallery.length == 0) {
+        throw new Error("image_gallery invalid format");
+      }
+      for (const key of image_gallery) {
+        if (typeof key != "string") {
+          throw new Error("image_gallery invalid format");
+        }
+      }
+    }),
+  requireServices: check("services")
+    .isArray()
+    .withMessage("services invalid format")
+    .custom(async (services) => {
+      if (services.length == 0) {
+        throw new Error("services invalid format");
+      }
+      for (const key of services) {
+        const ser = await Service.findOne({
+          service_code: key.service_code,
+          service_name: key.service_name,
+        });
+        if (!ser) {
+          throw new Error("service_name or service_code invalid");
+        }
+        if (!key.service_code || !key.service_name || !key.service_price) {
+          throw new Error("services invalid format");
+        }
+      }
+    }),
 };

@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const { handleMail, handleFailed } = require("../controllers/user/middleware");
 
-exports.sendEmail = async (email, res, user, code) => {
+exports.sendEmail = async (email, res, code) => {
   let mailTransporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -19,7 +19,7 @@ exports.sendEmail = async (email, res, user, code) => {
 
   mailTransporter.sendMail(mailDetails, (err, _) => {
     if (err) {
-      handleFailed(res, err, 500);
+      return handleFailed(res, err, 500);
     } else {
       const mess = `Verification code has been sent to email ${email} successfully`;
       handleMail(res, mess);

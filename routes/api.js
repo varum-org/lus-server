@@ -4,17 +4,24 @@ const controllerApiUser = require("../controllers/user/user");
 const controllerApiMessage = require("../controllers/message/message");
 const controllerIdol = require("../controllers/idol/idol");
 const controllerCart = require("../controllers/cart/cart");
+const controllerOrder = require("../controllers/order/order");
+const controllerService = require("../controllers/service/service");
 const {
   requireEmailLogin,
   requirePasswordLogin,
   requireEmailRegister,
-  requireVerifyCode,
+  requireVerifyEmail,
   requirePasswordRegister,
   requireId,
+  requireUserNameRegister,
+  requirePhoneRegister,
+  requireEmailCode,
 } = require("../controllers/user/validators");
 const {
   requireUserId,
   requireNickName,
+  requireImageGallery,
+  requireServices,
 } = require("../controllers/idol/validatiors");
 const {
   requireIdolIdCart,
@@ -26,6 +33,10 @@ const {
 } = require("../controllers/message/validators");
 const { handleErrors } = require("../controllers/user/middleware");
 const verify_token = require("../config/verify_token");
+const {
+  requireOrder,
+  requireStartDate,
+} = require("../controllers/order/validators");
 
 module.exports = router;
 
@@ -33,19 +44,30 @@ router.post(
   "/user/login",
   [requireEmailLogin, requirePasswordLogin],
   handleErrors(),
-  controllerApiUser.checkLogin
+  controllerApiUser.login
 );
 router.post(
   "/user/register",
-  [requireEmailRegister, requirePasswordRegister, requireVerifyCode],
+  [
+    requireEmailRegister,
+    requirePasswordRegister,
+    requireUserNameRegister,
+    requirePhoneRegister,
+  ],
   handleErrors(),
-  controllerApiUser.checkRegister
+  controllerApiUser.register
 );
 router.post(
   "/user/verify_email",
-  [requireEmailRegister],
+  [requireEmailRegister, requireVerifyEmail, requireEmailCode],
   handleErrors(),
   controllerApiUser.verifyEmail
+);
+router.post(
+  "/user/reset_email_code",
+  [requireEmailRegister],
+  handleErrors(),
+  controllerApiUser.resetEmailCode
 );
 router.post(
   "/user/information",
@@ -83,14 +105,14 @@ router.post(
 router.post(
   "/idol/register",
   verify_token,
-  [requireUserId, requireNickName],
+  [requireUserId, requireNickName, requireImageGallery, requireServices],
   handleErrors(),
   controllerIdol.register
 );
 router.post(
   "/idol/update",
   verify_token,
-  [requireUserId, requireNickName],
+  [requireUserId, requireNickName, requireImageGallery, requireServices],
   handleErrors(),
   controllerIdol.update
 );
@@ -117,3 +139,17 @@ router.post(
   verify_token,
   controllerCart.delete
 );
+
+// Order
+router.post(
+  "/order/add",
+  [requireOrder, requireStartDate],
+  handleErrors(),
+  controllerOrder.add
+);
+router.delete("/order/delete", controllerOrder.delete);
+router.patch("/order/update", controllerOrder.update);
+
+// Service
+router.get("/service/list", controllerService.list);
+router.post("/service/add", controllerService.add);

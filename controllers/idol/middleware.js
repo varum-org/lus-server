@@ -8,6 +8,7 @@ module.exports = {
         relationship: idol.relationship,
         description: idol.description,
         image_gallery: idol.image_gallery,
+        services: idol.services,
       },
       status_code: 200,
       messages: msg,

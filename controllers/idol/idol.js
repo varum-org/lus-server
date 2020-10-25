@@ -10,6 +10,7 @@ exports.register = async (req, res) => {
     relationship,
     description,
     image_gallery,
+    services,
   } = req.body;
 
   const user = await User.findOne({ _id: user_id });
@@ -21,12 +22,12 @@ exports.register = async (req, res) => {
       relationship: relationship,
       description: description,
       image_gallery: image_gallery,
+      services: services,
     });
 
     idol.save((err, docs) => {
       if (err) {
-        const msg = "Error while save data";
-        return handleFailed(res, msg);
+        return handleFailed(res, err);
       }
       user.role_id = 2;
       user.save();
@@ -48,6 +49,7 @@ exports.update = async (req, res) => {
     relationship,
     description,
     image_gallery,
+    services,
   } = req.body;
   const idol = await Idol.findOne({ user_id: user_id });
   if (idol) {
@@ -56,11 +58,11 @@ exports.update = async (req, res) => {
     idol.relationship = relationship;
     idol.description = description;
     idol.image_gallery = image_gallery;
+    idol.services = services;
 
     idol.save((err, docs) => {
       if (err) {
-        const msg = "Error while save data";
-        return handleFailed(res, msg);
+        return handleFailed(res, err);
       }
       const msg = "Update Idol successfully!";
       return handleSuccess(res, docs, msg);

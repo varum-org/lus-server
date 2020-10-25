@@ -11,9 +11,11 @@ const IdolSchema = new mongose.Schema({
   },
   address: {
     type: String,
+    required: true,
   },
   relationship: {
     type: String,
+    required: true,
   },
   status: {
     type: Number,
@@ -21,8 +23,13 @@ const IdolSchema = new mongose.Schema({
   },
   description: {
     type: String,
+    required: true,
   },
   image_gallery: {
+    type: Array,
+    required: true,
+  },
+  services: {
     type: Array,
     required: true,
   },

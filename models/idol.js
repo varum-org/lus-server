@@ -33,6 +33,9 @@ const IdolSchema = new mongose.Schema({
     type: Array,
     required: true,
   },
+  armorial: {
+    type: String,
+  },
   rent_time_total: {
     type: Number,
     default: 0,

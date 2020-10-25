@@ -14,6 +14,14 @@ module.exports = {
       messages: msg,
     });
   },
+  handleList(res, idol, msg) {
+    return res.json({
+      success: true,
+      data: idol,
+      status_code: 200,
+      messages: msg,
+    });
+  },
   handleFailed(res, msg) {
     return res.json({
       success: false,

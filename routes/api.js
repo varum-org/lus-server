@@ -22,6 +22,7 @@ const {
   requireNickName,
   requireImageGallery,
   requireServices,
+  search,
 } = require("../controllers/idol/validatiors");
 const {
   requireIdolIdCart,
@@ -102,6 +103,10 @@ router.post(
 );
 
 // Idol
+router.get("/idol/list", controllerIdol.list);
+router.get("/idol/top_rate", controllerIdol.topRate);
+router.get("/idol/random", controllerIdol.random);
+router.get("/idol/search", [search], handleErrors(), controllerIdol.search);
 router.post(
   "/idol/register",
   verify_token,

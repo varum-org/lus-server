@@ -1,6 +1,6 @@
 const mongose = require("mongoose");
 
-const CartSchema = new mongose.Schema({
+const FavoriteSchema = new mongose.Schema({
   user_id: {
     type: String,
     required: true,
@@ -11,5 +11,5 @@ const CartSchema = new mongose.Schema({
   },
 });
 
-const Cart = mongose.model("Cart", CartSchema);
-module.exports = Cart;
+const Favorite = mongose.model("Favorite", FavoriteSchema);
+module.exports = Favorite;

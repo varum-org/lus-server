@@ -19,6 +19,14 @@ module.exports = {
       messages: msg,
     });
   },
+  handleList(res, orders, msg) {
+    return res.status(200).json({
+      success: true,
+      data: orders,
+      status_code: 200,
+      messages: msg,
+    });
+  },
   handleFailed(res, msg) {
     return res.status(500).json({
       success: false,

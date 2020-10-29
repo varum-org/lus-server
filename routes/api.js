@@ -3,7 +3,7 @@ const router = express.Router();
 const controllerApiUser = require("../controllers/user/user");
 const controllerApiMessage = require("../controllers/message/message");
 const controllerIdol = require("../controllers/idol/idol");
-const controllerCart = require("../controllers/cart/cart");
+const controllerCart = require("../controllers/favorite/favorite");
 const controllerOrder = require("../controllers/order/order");
 const controllerService = require("../controllers/service/service");
 const {
@@ -24,12 +24,8 @@ const {
   requireServices,
   search,
 } = require("../controllers/idol/validatiors");
+const { requireIdolIdCart } = require("../controllers/favorite/validators");
 const {
-  requireIdolIdCart,
-  requireUserIdCart,
-} = require("../controllers/cart/validators");
-const {
-  requireUserIdSendMess,
   requireUserIdReceiveMess,
 } = require("../controllers/message/validators");
 const { handleErrors } = require("../controllers/user/middleware");
@@ -70,43 +66,27 @@ router.post(
   handleErrors(),
   controllerApiUser.resetEmailCode
 );
-router.post(
-  "/user/information",
-  verify_token,
-  [requireId],
-  handleErrors(),
-  controllerApiUser.userInfomation
-);
+router.get("/user", verify_token, controllerApiUser.userInfomation);
 
 // Message
+router.get("/message/rooms", verify_token, controllerApiMessage.loadAllRoom);
 router.post(
-  "/message/loadAllRoom",
-  verify_token,
-  controllerApiMessage.loadAllRoom
-);
-router.post(
-  "/message/checkRoomAvailable",
+  "/message/rooms/check",
   verify_token,
   controllerApiMessage.checkRoomAvailable
 );
 router.post(
-  "/message/createRoom",
+  "/message/rooms",
   verify_token,
-  [requireUserIdSendMess, requireUserIdReceiveMess],
+  [requireUserIdReceiveMess],
   handleErrors(),
   controllerApiMessage.createRoom
 );
-router.post(
-  "/message/detail",
-  verify_token,
-  controllerApiMessage.messageDetail
-);
+router.get("/message/:id", verify_token, controllerApiMessage.messageDetail);
 
 // Idol
-router.get("/idol/list", controllerIdol.list);
-router.get("/idol/top_rate", controllerIdol.topRate);
-router.get("/idol/random", controllerIdol.random);
-router.get("/idol/search", [search], handleErrors(), controllerIdol.search);
+router.get("/idols", controllerIdol.list);
+router.get("/idols/search", [search], handleErrors(), controllerIdol.search);
 router.post(
   "/idol/register",
   verify_token,
@@ -122,38 +102,33 @@ router.post(
   controllerIdol.update
 );
 
-// Cart
+// Favorite
+router.get("/favorites", verify_token, controllerCart.list);
 router.post(
-  "/cart/list",
-  [requireUserIdCart],
-  handleErrors(),
-  verify_token,
-  controllerCart.list
-);
-router.post(
-  "/cart/add",
-  [requireUserIdCart, requireIdolIdCart],
+  "/favorites/:id",
+  [requireIdolIdCart],
   handleErrors(),
   verify_token,
   controllerCart.add
 );
-router.post(
-  "/cart/delete",
-  [requireUserIdCart, requireIdolIdCart],
+router.delete(
+  "/favorites/:id",
+  [requireIdolIdCart],
   handleErrors(),
   verify_token,
   controllerCart.delete
 );
 
 // Order
+router.get("/orders", verify_token, controllerOrder.list);
 router.post(
-  "/order/add",
+  "/orders",
   [requireOrder, requireStartDate],
   handleErrors(),
   controllerOrder.add
 );
-router.delete("/order/delete", controllerOrder.delete);
-router.patch("/order/update", controllerOrder.update);
+router.delete("/orders", controllerOrder.delete);
+router.patch("/orders", controllerOrder.update);
 
 // Service
 router.get("/service/list", controllerService.list);

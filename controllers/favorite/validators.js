@@ -10,13 +10,13 @@ module.exports = {
         throw new Error("user_id not match!");
       }
     }),
-  requireIdolIdCart: check("idol_id")
+  requireIdolIdCart: check("id")
     .trim()
     .isLength({ min: 1 })
-    .withMessage("user_id must be a valid id")
+    .withMessage("id must be a valid id")
     .custom(async (idol_id) => {
       if (!idol_id.match(/^[0-9a-fA-F]{24}$/)) {
-        throw new Error("idol_id not match!");
+        throw new Error("id not match!");
       }
     }),
 };

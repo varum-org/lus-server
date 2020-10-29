@@ -3,19 +3,19 @@ const mongose = require("mongoose");
 const UserSchema = new mongose.Schema({
   email: {
     type: String,
-    default: null,
+    required: true,
   },
   password: {
     type: String,
-    default: null,
+    required: true,
   },
   user_name: {
     type: String,
-    default: null,
+    required: true,
   },
   phone: {
     type: Number,
-    default: null,
+    required: true,
   },
   gender: {
     type: String,
@@ -34,6 +34,10 @@ const UserSchema = new mongose.Schema({
     default: 1,
   },
   image_path: {
+    type: String,
+    default: null,
+  },
+  token: {
     type: String,
     default: null,
   },

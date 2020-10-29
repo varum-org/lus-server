@@ -10,7 +10,7 @@ module.exports = {
         throw new Error("userIdSend not match!");
       }
     }),
-  requireUserIdReceiveMess: check("userIdReceive")
+  requireUserIdReceiveMess: check("user_id_receive")
     .trim()
     .isLength({ min: 1 })
     .withMessage("user_id must be a valid id")

@@ -1,6 +1,4 @@
 const { validationResult } = require("express-validator");
-const jwt = require("jsonwebtoken");
-const config = require("../../config/config");
 
 module.exports = {
   handleErrors() {
@@ -18,9 +16,6 @@ module.exports = {
     };
   },
   handleSuccess(res, user, mess) {
-    const token = jwt.sign({ id: user._id }, config.secret, {
-      expiresIn: 2592000, // expires in 30 days
-    });
     return res.json({
       success: true,
       data: {
@@ -32,7 +27,7 @@ module.exports = {
           isActive: user.isActive,
           image_path: user.image_path,
         },
-        auth_token: token,
+        token: user.token,
         is_admin: user.role_id == 0 ? true : false,
       },
       status_code: 200,

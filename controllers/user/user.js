@@ -2,6 +2,8 @@ const User = require("../../models/user");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto-random-string");
 const mail = require("../../config/send_email");
+const jwt = require("jsonwebtoken");
+const config = require("../../config/config");
 const { handleSuccess, handleFailed } = require("./middleware");
 const Wallet = require("../../models/wallet");
 
@@ -9,7 +11,11 @@ const Wallet = require("../../models/wallet");
 exports.login = async (req, res) => {
   const { email, device_token } = req.body;
   await User.findOne({ email: email }, (_, user) => {
+    const token = jwt.sign({ id: user._id }, config.secret, {
+      expiresIn: 2592000, // expires in 30 days
+    });
     user.device_token = device_token;
+    user.token = token;
     user.save((err, user) => {
       if (!err) {
         const mess = "Login Successfully!";
@@ -62,7 +68,7 @@ exports.verifyEmail = async (req, res) => {
   ) {
     user.save(async (err, docs) => {
       if (!err) {
-        createWallet(res, docs._id, email);
+        createWallet(docs._id);
 
         docs.email_active = 1;
         docs.email_code = null;
@@ -96,36 +102,30 @@ exports.resetEmailCode = async (req, res) => {
   user.email_code_expires = Date.now() + 600000;
   user.save((err, docs) => {
     if (!err) {
-      const msg = "Your code has been reset"
+      const msg = "Your code has been reset";
       return handleSuccess(res, docs, msg);
     }
     return res.json(err);
   });
 };
 
-const createWallet = async (res, user_id, email) => {
+const createWallet = async (user_id) => {
   const user_wallet = new Wallet({
     user_id: user_id,
     balance: 0,
   });
-  user_wallet.save((err, docs) => {
-    console.log("Wallet has been for user_id -> Bug")
-  });
+  user_wallet.save();
 };
 
 exports.userInfomation = async (req, res) => {
-  const { id } = req.body;
-  if (id.match(/^[0-9a-fA-F]{24}$/)) {
-    const user = await User.findOne({ _id: id });
-    if (user) {
-      const mess = "Get information successfully";
-      handleSuccess(res, user, mess);
-    } else {
-      const mess = "Id not found!";
-      handleFailed(res, mess, 404);
-    }
+  const token = req.header("authorization");
+
+  const user = await User.findOne({ token: token });
+  if (user) {
+    const mess = "Get information successfully";
+    handleSuccess(res, user, mess);
   } else {
-    const mess = "Id invalid";
-    handleFailed(res, mess, 500);
+    const mess = "User not found!";
+    handleFailed(res, mess, 404);
   }
 };

@@ -5,9 +5,11 @@ const { handleSuccess, handleFailed } = require("./middleware");
 const Message = require("../../models/message");
 
 exports.loadAllRoom = async (req, res) => {
-  const { userId } = req.body;
-  const filter1 = { userIdSend: userId };
-  const filter2 = { userIdReceive: userId };
+  const token = req.header("authorization");
+  const user = await User.findOne({ token: token });
+
+  const filter1 = { userIdSend: user._id };
+  const filter2 = { userIdReceive: user._id };
 
   const getRoom1 = await Room.find(filter1);
   const getRoom2 = await Room.find(filter2);
@@ -51,14 +53,13 @@ exports.loadAllRoom = async (req, res) => {
 
 //Check room by userIdSend and userIdReceive
 exports.checkRoomAvailable = async (req, res) => {
-  const { userIdSend, userIdReceive } = req.body;
+  const { user_id_receive } = req.body;
+  const token = req.header("authorization");
+  const user = await User.findOne({ token: token });
 
-  if (
-    userIdSend.match(/^[0-9a-fA-F]{24}$/) &&
-    userIdReceive.match(/^[0-9a-fA-F]{24}$/)
-  ) {
-    const filter1 = { userIdSend: userIdSend, userIdReceive: userIdReceive };
-    const filter2 = { userIdSend: userIdReceive, userIdReceive: userIdSend };
+  if (user_id_receive.match(/^[0-9a-fA-F]{24}$/)) {
+    const filter1 = { userIdSend: user._id, userIdReceive: user_id_receive };
+    const filter2 = { userIdSend: user_id_receive, userIdReceive: user._id };
     const room1 = await Room.findOne(filter1);
     const room2 = await Room.findOne(filter2);
 
@@ -90,10 +91,12 @@ exports.checkRoomAvailable = async (req, res) => {
 
 // Create room
 exports.createRoom = async (req, res) => {
-  const { userIdSend, userIdReceive } = req.body;
+  const { user_id_receive } = req.body;
+  const token = req.header("authorization");
+  const user = await User.findOne({ token: token });
 
-  const filter1 = { userIdSend: userIdSend, userIdReceive: userIdReceive };
-  const filter2 = { userIdSend: userIdReceive, userIdReceive: userIdSend };
+  const filter1 = { userIdSend: user._id, userIdReceive: user_id_receive };
+  const filter2 = { userIdSend: user_id_receive, userIdReceive: user._id };
   const room1 = await Room.findOne(filter1);
   const room2 = await Room.findOne(filter2);
 
@@ -104,15 +107,15 @@ exports.createRoom = async (req, res) => {
     handleSuccess(res, room2, msg);
   } else {
     let idRandom = uuidv4();
-    const userSend = await User.findById(userIdSend);
-    const userReceive = await User.findById(userIdReceive);
+    const userSend = await User.findById(user._id);
+    const userReceive = await User.findById(user_id_receive);
 
     if (userSend && userReceive) {
       Room.create(
         {
-          userIdSend: userIdSend,
+          userIdSend: user._id,
           userNameSend: userSend.user_name,
-          userIdReceive: userIdReceive,
+          userIdReceive: user_id_receive,
           userNameReceive: userReceive.user_name,
           roomId: idRandom,
         },
@@ -130,8 +133,9 @@ exports.createRoom = async (req, res) => {
 };
 
 exports.messageDetail = async (req, res) => {
-  const { roomId } = req.body;
-  const filter = { roomId: roomId };
+  const { id } = req.params;
+
+  const filter = { roomId: id };
   await Message.find(filter, (err, message) => {
     if (!err) {
       res.json(message);

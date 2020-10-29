@@ -3,50 +3,49 @@ const User = require("../../models/user");
 const { handleFailed, handleSuccess, handleList } = require("./middleware");
 
 exports.list = async (req, res) => {
-  const idols = await Idol.find();
-  if (idols) {
-    const msg = "Get list idol success";
-    return handleList(res, idols, msg);
-  } else {
-    const msg = "Idols not found";
-    return handleFailed(res, msg);
-  }
-};
+  const { list } = req.query;
 
-exports.topRate = async (req, res) => {
-  Idol.find()
-    .sort({ rating: -1 })
-    .limit(10)
-    .then((idols) => {
-      const msg = "Get top rate list success";
+  if (list == "all") {
+    const idols = await Idol.find();
+    if (idols) {
+      const msg = "Get list idol success";
       return handleList(res, idols, msg);
-    });
-};
-
-exports.random = async (req, res) => {
-  const idols = await Idol.find();
-  if (idols) {
-    let newIdolList = [];
-    var arr = [];
-    while (arr.length < idols.length) {
-      var r = Math.floor(Math.random() * idols.length);
-      if (arr.indexOf(r) === -1) arr.push(r);
+    } else {
+      const msg = "Idols not found";
+      return handleFailed(res, msg);
     }
-    for (const key of arr) {
-      newIdolList.push(idols[key]);
-    }
+  } else if (list == "rating") {
+    Idol.find()
+      .sort({ rating: -1 })
+      .limit(10)
+      .then((idols) => {
+        const msg = "Get top rate list success";
+        return handleList(res, idols, msg);
+      });
+  } else if (list == "random") {
+    const idols = await Idol.find();
+    if (idols) {
+      let newIdolList = [];
+      var arr = [];
+      while (arr.length < idols.length) {
+        var r = Math.floor(Math.random() * idols.length);
+        if (arr.indexOf(r) === -1) arr.push(r);
+      }
+      for (const key of arr) {
+        newIdolList.push(idols[key]);
+      }
 
-    const msg = "Get list idol success";
-    return handleList(res, newIdolList, msg);
-  } else {
-    const msg = "Get list random idol failure";
-    return handleList(res, idols, msg);
+      const msg = "Get list idol success";
+      return handleList(res, newIdolList, msg);
+    } else {
+      const msg = "Get list random idol failure";
+      return handleList(res, idols, msg);
+    }
   }
 };
 
 exports.register = async (req, res) => {
   const {
-    user_id,
     nick_name,
     address,
     relationship,
@@ -54,11 +53,12 @@ exports.register = async (req, res) => {
     image_gallery,
     services,
   } = req.body;
+  const token = req.header("authorization");
 
-  const user = await User.findOne({ _id: user_id });
+  const user = await User.findOne({ token: token });
   if (user && user.role_id != 2) {
     const idol = new Idol({
-      user_id: user_id,
+      user_id: user._id,
       nick_name: nick_name,
       address: address,
       relationship: relationship,
@@ -85,7 +85,6 @@ exports.register = async (req, res) => {
 
 exports.update = async (req, res) => {
   const {
-    user_id,
     nick_name,
     address,
     relationship,
@@ -93,7 +92,10 @@ exports.update = async (req, res) => {
     image_gallery,
     services,
   } = req.body;
-  const idol = await Idol.findOne({ user_id: user_id });
+  const token = req.header("authorization");
+
+  const user = await User.findOne({ token: token });
+  const idol = await Idol.findOne({ user_id: user._id });
   if (idol) {
     idol.nick_name = nick_name;
     idol.address = address;
@@ -116,9 +118,9 @@ exports.update = async (req, res) => {
 };
 
 exports.search = async (req, res) => {
-  const { nick_name, rating } = req.body;
+  const { name, rating } = req.query;
 
-  Idol.find({ nick_name: new RegExp(nick_name, "i") }, function (err, docs) {
+  Idol.find({ nick_name: new RegExp(name, "i") }, function (err, docs) {
     let newIdols = [];
     if (rating) {
       for (const key of docs) {

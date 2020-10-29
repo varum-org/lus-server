@@ -52,4 +52,12 @@ module.exports = {
         }
       }
     }),
+  search: check("nick_name")
+    .trim()
+    .custom(async (nick_name, { req }) => {
+      const { rating } = req.body;
+      if (isNaN(rating)) {
+        throw new Error("Rating must be a number");
+      }
+    }),
 };

@@ -13,8 +13,8 @@ module.exports = {
     }),
   requireNickName: check("nick_name")
     .trim()
-    .isLength({ min: 1, max: 20 })
-    .withMessage("nick_name must be between 1 and 20 characters"),
+    .isLength({ min: 1, max: 6 })
+    .withMessage("nick_name must be between 1 and 6 characters"),
   requireAddress: check("address")
     .trim()
     .isLength({ min: 1, max: 20 })
@@ -54,10 +54,16 @@ module.exports = {
     }),
   search: check("nick_name")
     .trim()
-    .custom(async (name, { req }) => {
+    .custom(async (_, { req }) => {
       const { rating } = req.query;
       if (isNaN(rating)) {
         throw new Error("Rating must be a number");
       }
     }),
+  images: check("image_gallery").custom(async (_, { req }) => {
+    const images = req.files;
+    if (images.length == 0) {
+      throw new Error("image_gallery not null");
+    }
+  }),
 };

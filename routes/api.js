@@ -12,7 +12,6 @@ const {
   requireEmailRegister,
   requireVerifyEmail,
   requirePasswordRegister,
-  requireId,
   requireUserNameRegister,
   requirePhoneRegister,
   requireEmailCode,
@@ -23,6 +22,7 @@ const {
   requireImageGallery,
   requireServices,
   search,
+  images,
 } = require("../controllers/idol/validatiors");
 const { requireIdolIdCart } = require("../controllers/favorite/validators");
 const {
@@ -33,7 +33,10 @@ const verify_token = require("../config/verify_token");
 const {
   requireOrder,
   requireStartDate,
+  requireOrderUpdate,
 } = require("../controllers/order/validators");
+const multer = require("multer");
+const upload = multer({ dest: "public/image/" });
 
 module.exports = router;
 
@@ -68,7 +71,7 @@ router.post(
 );
 router.get("/user", verify_token, controllerApiUser.userInfomation);
 
-// Message
+// Message -------------------------
 router.get("/message/rooms", verify_token, controllerApiMessage.loadAllRoom);
 router.post(
   "/message/rooms/check",
@@ -84,25 +87,33 @@ router.post(
 );
 router.get("/message/:id", verify_token, controllerApiMessage.messageDetail);
 
-// Idol
+// Idol -------------------------
 router.get("/idols", controllerIdol.list);
 router.get("/idols/search", [search], handleErrors(), controllerIdol.search);
 router.post(
-  "/idol/register",
+  "/idols",
   verify_token,
-  [requireUserId, requireNickName, requireImageGallery, requireServices],
+  [requireNickName, requireImageGallery, requireServices],
   handleErrors(),
   controllerIdol.register
 );
-router.post(
-  "/idol/update",
+router.put(
+  "/idols",
   verify_token,
   [requireUserId, requireNickName, requireImageGallery, requireServices],
   handleErrors(),
   controllerIdol.update
 );
+router.post(
+  "/idols/images",
+  verify_token,
+  upload.array("image_gallery", 10),
+  [images],
+  handleErrors(),
+  controllerIdol.upload_image
+);
 
-// Favorite
+// Favorite -------------------------
 router.get("/favorites", verify_token, controllerCart.list);
 router.post(
   "/favorites/:id",
@@ -119,17 +130,25 @@ router.delete(
   controllerCart.delete
 );
 
-// Order
+// Order -------------------------
 router.get("/orders", verify_token, controllerOrder.list);
+router.get("idol/orders", verify_token, controllerOrder.list_for_idol);
 router.post(
   "/orders",
   [requireOrder, requireStartDate],
   handleErrors(),
+  verify_token,
   controllerOrder.add
 );
-router.delete("/orders", controllerOrder.delete);
-router.patch("/orders", controllerOrder.update);
+router.delete("/orders", verify_token, controllerOrder.delete);
+router.patch(
+  "/orders",
+  [requireOrderUpdate],
+  handleErrors(),
+  verify_token,
+  controllerOrder.update
+);
 
-// Service
-router.get("/service/list", controllerService.list);
-router.post("/service/add", controllerService.add);
+// Service -------------------------
+router.get("/services", verify_token, controllerService.list);
+router.post("/services", controllerService.add);

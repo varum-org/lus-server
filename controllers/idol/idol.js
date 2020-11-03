@@ -1,5 +1,7 @@
 const Idol = require("../../models/idol");
 const User = require("../../models/user");
+const cloudinary = require("../../config/cloudinary");
+const fs = require("fs");
 const { handleFailed, handleSuccess, handleList } = require("./middleware");
 
 exports.list = async (req, res) => {
@@ -54,8 +56,8 @@ exports.register = async (req, res) => {
     services,
   } = req.body;
   const token = req.header("authorization");
-
   const user = await User.findOne({ token: token });
+
   if (user && user.role_id != 2) {
     const idol = new Idol({
       user_id: user._id,
@@ -135,4 +137,18 @@ exports.search = async (req, res) => {
       return handleList(res, docs, msg);
     }
   });
+};
+exports.upload_image = async (req, res) => {
+  const uploader = async (path) => await cloudinary.uploader.upload(path);
+  const urls = [];
+  const files = req.files;
+  for (const file of files) {
+    const { path } = file;
+    const newPath = await uploader(path);
+    urls.push(newPath.url);
+    fs.unlinkSync(path);
+  }
+
+  const msg = "images uploaded successfully";
+  return handleList(res, urls, msg);
 };

@@ -51,7 +51,7 @@ exports.list = async (req, res) => {
   }
 };
 
-exports.list_orders = async (req, res) => {
+exports.list_for_idol = async (req, res) => {
   const token = req.header("authorization");
   const user = await User.findOne({ token: token });
 
@@ -132,8 +132,8 @@ exports.update = async (req, res) => {
   const order = await Order.findOne({ _id: order_id });
   const wallet = await Wallet.findOne({ user_id: order.user_id });
 
-  if (wallet.balance >= order.total) {
-    if (order && status == 1) {
+  if (order && status == 1) {
+    if (wallet.balance >= order.total) {
       order.status = status;
       order.save(async (err, result) => {
         if (!err) {
@@ -147,14 +147,22 @@ exports.update = async (req, res) => {
         }
       });
     } else {
-      const msg = "Update order failure";
-      return handleFailed(res, msg);
+      await Order.findOneAndDelete({ _id: order_id }, (err) => {
+        if (!err) {
+          const msg = "Customer not enough Xu. Order has been delete";
+          return handleFailed(res, msg);
+        }
+      });
     }
   } else {
-    await Order.findOneAndDelete({ _id: order_id }, (err, result) => {
+    order.status = status;
+    order.save(async (err, result) => {
       if (!err) {
-        const msg = "Customer not enough Xu. Order has been delete";
+        const msg = "Update order success";
         return handleSuccess(res, result, msg);
+      } else {
+        const msg = "Update order failure";
+        return handleFailed(res, msg);
       }
     });
   }

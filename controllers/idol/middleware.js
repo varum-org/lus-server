@@ -1,6 +1,6 @@
 module.exports = {
   handleSuccess(res, idol, msg) {
-    return res.json({
+    return res.status(200).json({
       success: true,
       data: {
         nick_name: idol.nick_name,
@@ -15,7 +15,7 @@ module.exports = {
     });
   },
   handleList(res, idol, msg) {
-    return res.json({
+    return res.status(200).json({
       success: true,
       data: idol,
       status_code: 200,
@@ -23,7 +23,7 @@ module.exports = {
     });
   },
   handleFailed(res, msg) {
-    return res.json({
+    return res.status(500).json({
       success: false,
       data: {},
       status_code: 500,

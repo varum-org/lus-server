@@ -67,10 +67,7 @@ module.exports = {
         if (!key.service_code || !key.service_name || !key.service_price) {
           throw new Error("services invalid format");
         }
-        if (
-          isNaN(key.service_price) ||
-          key.service_price < 1
-        ) {
+        if (isNaN(key.service_price) || key.service_price < 1) {
           throw new Error("Service Price must be greater than 0");
         }
       }
@@ -79,4 +76,15 @@ module.exports = {
     .isISO8601()
     .toDate()
     .withMessage("Start date must be a valid date"),
+  requireOrderUpdate: check("order_id")
+    .trim()
+    .custom(async (order_id, {req}) => {
+      const {status} = req.body;
+      if (!order_id.match(/^[0-9a-fA-F]{24}$/)) {
+        throw new Error("order_id not match")
+      }
+      if(isNaN(status)){
+        throw new Error("status must be a number")
+      }
+    }),
 };

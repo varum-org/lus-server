@@ -11,7 +11,7 @@ const express = require("express"),
   Message = require("./models/message.js"),
   http = require("http").createServer(app),
   io = require("socket.io")(http),
-  YAML = require('yamljs');
+  YAML = require("yamljs");
 
 // configure body-parser
 app.use(bodyParser.json({ limit: "50mb" })); // parse form data client
@@ -31,6 +31,7 @@ mongose
   })
   .catch((err) => console.log(err));
 
+//Config Socket io
 io.on("connection", (socket) => {
   socket.emit("askForUserId");
   socket.on("create room", (msg) => {
@@ -84,7 +85,7 @@ app.get("/", (req, res) =>
 app.use("/api/v1", require("./routes/api.js"));
 
 // Swagger
-const swaggerDocument = YAML.load('./docs/api-docs.yml');
+const swaggerDocument = YAML.load("./docs/api-docs.yml");
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Setup a default catch-all route that sends back a welcome message in JSON format.

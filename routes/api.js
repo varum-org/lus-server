@@ -6,6 +6,7 @@ const controllerIdol = require("../controllers/idol/idol");
 const controllerCart = require("../controllers/favorite/favorite");
 const controllerOrder = require("../controllers/order/order");
 const controllerService = require("../controllers/service/service");
+const controllerLike = require("../controllers/like/like");
 const {
   requireEmailLogin,
   requirePasswordLogin,
@@ -152,3 +153,6 @@ router.patch(
 // Service -------------------------
 router.get("/services", verify_token, controllerService.list);
 router.post("/services", controllerService.add);
+
+// Like -------------------------
+router.get("/like", verify_token, controllerLike.like);

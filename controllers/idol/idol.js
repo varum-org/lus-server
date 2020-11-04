@@ -3,9 +3,33 @@ const User = require("../../models/user");
 const cloudinary = require("../../config/cloudinary");
 const fs = require("fs");
 const { handleFailed, handleSuccess, handleList } = require("./middleware");
+const Like = require("../../models/like");
 
 exports.list = async (req, res) => {
   const { list } = req.query;
+
+  const token = req.header("authorization");
+  const user = await User.findOne({ token: token });
+  if (token && user) {
+    const idols = await Idol.find();
+    const idolsArray = [];
+
+    for (const data of idols) {
+      let userData = { data };
+      const like = await Like.findOne({
+        user_id: user._id,
+        idol_id: data.user_id,
+      });
+      if (like) {
+        userData.liked = like.status;
+      } else {
+        userData.liked = false;
+      }
+      idolsArray.push(userData);
+    }
+    const msg = "Get list idol success";
+    return handleList(res, idolsArray, msg);
+  }
 
   if (list == "all") {
     const idols = await Idol.find();
@@ -41,8 +65,11 @@ exports.list = async (req, res) => {
       return handleList(res, newIdolList, msg);
     } else {
       const msg = "Get list random idol failure";
-      return handleList(res, idols, msg);
+      return handleFailed(res, msg);
     }
+  } else {
+    const msg = "Get list idol failure";
+    return handleFailed(res, msg);
   }
 };
 

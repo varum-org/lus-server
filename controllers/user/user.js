@@ -21,7 +21,7 @@ exports.login = async (req, res) => {
         const mess = "Login Successfully!";
         handleSuccess(res, user, mess);
       } else {
-        handleFailed(res, err, 500);
+        handleFailed(res, err, 401);
       }
     });
   });

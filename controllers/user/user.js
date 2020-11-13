@@ -48,7 +48,7 @@ exports.register = async (req, res) => {
           if (!err) {
             return mail.sendEmail(email, res, code);
           } else {
-            return handleFailed(res, err, 500);
+            return handleFailed(res, err, 401);
           }
         });
       }

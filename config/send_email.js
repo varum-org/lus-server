@@ -1,12 +1,19 @@
 const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
+const { OAuth2 } = google.auth;
 const { handleMail, handleFailed } = require("../controllers/user/middleware");
+const REDIRECT_URL =  "https://developers.google.com/oauthplayground"
 
 exports.sendEmail = async (email, res, code) => {
   let mailTransporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
+      type: "OAuth2",
       user: process.env.EMAIL,
-      pass: process.env.PASSWORD,
+      clientId: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      refreshToken: process.env.REFRESH_TOKEN,
+      accessToken: process.env.ACCESS_TOKEN,
     },
   });
 
@@ -19,6 +26,8 @@ exports.sendEmail = async (email, res, code) => {
 
   mailTransporter.sendMail(mailDetails, (err, _) => {
     if (err) {
+      console.log(err);
+
       return handleFailed(res, err, 500);
     } else {
       const mess = `Verification code has been sent to email ${email} successfully`;

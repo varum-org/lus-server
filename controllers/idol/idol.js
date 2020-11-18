@@ -27,9 +27,11 @@ exports.list = async (req, res) => {
         .limit(10)
         .then((idols) => handleResponse(idols))
         .then((responseIdols) => {
+          const msg = "Get list idol success";
           return handleList(res, responseIdols, msg);
         })
         .catch((err) => {
+          console.log(err);
           return handleFailed(res, err, 500);
         });
     } else if (category == "random") {

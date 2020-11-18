@@ -89,7 +89,7 @@ router.post(
 router.get("/message/:id", verify_token, controllerApiMessage.messageDetail);
 
 // Idol -------------------------
-router.get("/idols", controllerIdol.list);
+router.get("/idols",verify_token,  controllerIdol.list);
 router.get("/idols/search", [search], handleErrors(), controllerIdol.search);
 router.post(
   "/idols",

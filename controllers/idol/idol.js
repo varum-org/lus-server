@@ -6,7 +6,7 @@ const { handleFailed, handleSuccess, handleList } = require("./middleware");
 const Like = require("../../models/like");
 
 exports.list = async (req, res) => {
-  const { list } = req.query;
+  const { category } = req.query;
 
   const token = req.header("authorization");
   const user = await User.findOne({ token: token });
@@ -25,13 +25,13 @@ exports.list = async (req, res) => {
       } else {
         userData.liked = false;
       }
-      idolsArray.push(userData);
+      idolsArray.push(userData.data);
     }
     const msg = "Get list idol success";
     return handleList(res, idolsArray, msg);
   }
 
-  if (list == "all") {
+  if (category == "all") {
     const idols = await Idol.find();
     if (idols) {
       const msg = "Get list idol success";
@@ -40,7 +40,7 @@ exports.list = async (req, res) => {
       const msg = "Idols not found";
       return handleFailed(res, msg);
     }
-  } else if (list == "rating") {
+  } else if (category == "rating") {
     Idol.find()
       .sort({ rating: -1 })
       .limit(10)
@@ -48,7 +48,7 @@ exports.list = async (req, res) => {
         const msg = "Get top rate list success";
         return handleList(res, idols, msg);
       });
-  } else if (list == "random") {
+  } else if (category == "random") {
     const idols = await Idol.find();
     if (idols) {
       let newIdolList = [];

@@ -22,11 +22,11 @@ module.exports = {
       messages: msg,
     });
   },
-  handleFailed(res, msg) {
-    return res.status(500).json({
+  handleFailed(res, msg, code) {
+    return res.status(code).json({
       success: false,
       data: {},
-      status_code: 500,
+      status_code: code,
       messages: msg,
     });
   },

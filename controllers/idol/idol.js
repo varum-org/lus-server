@@ -56,7 +56,7 @@ exports.list = async (req, res) => {
     }
   } else {
     const msg = "No user provided.";
-    return handleFailed(res, msg, 404);
+    return handleFailed(res, msg, 403);
   }
 };
 

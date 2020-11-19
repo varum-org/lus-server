@@ -139,6 +139,6 @@ exports.userInfomation = async (req, res) => {
     handleGetUserSuccess(res, user, mess);
   } else {
     const mess = "User not found!";
-    handleFailed(res, mess, 404);
+    handleFailed(res, mess, 403);
   }
 };

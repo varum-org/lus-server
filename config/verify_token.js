@@ -19,7 +19,7 @@ const verify_token = (req, res, next) => {
     });
   } else {
     const mess = "No token provided.";
-    handleFailed(res, mess, 404);
+    handleFailed(res, mess, 403);
   }
 };
 

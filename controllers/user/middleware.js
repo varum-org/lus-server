@@ -34,6 +34,16 @@ module.exports = {
       messages: mess,
     });
   },
+  handleGetUserSuccess(res, user, mess) {
+    return res.json({
+      success: true,
+      data: {
+        user
+      },
+      status_code: 200,
+      messages: mess,
+    });
+  },
   handleMail(res, msg) {
     return res.json({
       success: true,

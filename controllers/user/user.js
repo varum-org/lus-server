@@ -4,7 +4,11 @@ const crypto = require("crypto-random-string");
 const mail = require("../../config/send_email");
 const jwt = require("jsonwebtoken");
 const config = require("../../config/config");
-const { handleSuccess, handleFailed } = require("./middleware");
+const {
+  handleSuccess,
+  handleFailed,
+  handleGetUserSuccess,
+} = require("./middleware");
 const Wallet = require("../../models/wallet");
 
 // Check login
@@ -120,10 +124,19 @@ const createWallet = async (user_id) => {
 exports.userInfomation = async (req, res) => {
   const token = req.header("authorization");
 
-  const user = await User.findOne({ token: token });
+  const user = await User.findOne(
+    { token: token },
+    {
+      password: 0,
+      device_token: 0,
+      token: 0,
+      email_code: 0,
+      email_code_expires: 0,
+    }
+  );
   if (user) {
     const mess = "Get information successfully";
-    handleSuccess(res, user, mess);
+    handleGetUserSuccess(res, user, mess);
   } else {
     const mess = "User not found!";
     handleFailed(res, mess, 404);

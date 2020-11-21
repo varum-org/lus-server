@@ -125,7 +125,7 @@ exports.userInfomation = async (req, res) => {
   const { id } = req.params;
 
   const user = await User.findOne(
-    { token: token },
+    { _id: id },
     {
       password: 0,
       device_token: 0,

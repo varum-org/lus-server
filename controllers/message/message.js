@@ -53,13 +53,13 @@ exports.loadAllRoom = async (req, res) => {
 
 //Check room by userIdSend and userIdReceive
 exports.checkRoomAvailable = async (req, res) => {
-  const { user_id_receive } = req.body;
+  const { id } = req.body;
   const token = req.header("authorization");
   const user = await User.findOne({ token: token });
 
-  if (user_id_receive.match(/^[0-9a-fA-F]{24}$/)) {
-    const filter1 = { userIdSend: user._id, userIdReceive: user_id_receive };
-    const filter2 = { userIdSend: user_id_receive, userIdReceive: user._id };
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {
+    const filter1 = { userIdSend: user._id, userIdReceive: id };
+    const filter2 = { userIdSend: id, userIdReceive: user._id };
     const room1 = await Room.findOne(filter1);
     const room2 = await Room.findOne(filter2);
 
@@ -91,14 +91,13 @@ exports.checkRoomAvailable = async (req, res) => {
 
 // Create room
 exports.createRoom = async (req, res) => {
-  const { user_id_receive } = req.body;
+  const { id } = req.body;
   const token = req.header("authorization");
   const user = await User.findOne({ token: token });
 
-  const filter1 = { userIdSend: user._id, userIdReceive: user_id_receive };
-  const filter2 = { userIdSend: user_id_receive, userIdReceive: user._id };
-  const room1 = await Room.findOne(filter1);
-  const room2 = await Room.findOne(filter2);
+  const filter = { user_id: [user._id, id] };
+
+  const room = await Room.findOne(filter);
 
   const msg = "Create room success";
   if (room1) {
@@ -108,14 +107,14 @@ exports.createRoom = async (req, res) => {
   } else {
     let idRandom = uuidv4();
     const userSend = await User.findById(user._id);
-    const userReceive = await User.findById(user_id_receive);
+    const userReceive = await User.findById(id);
 
     if (userSend && userReceive) {
       Room.create(
         {
           userIdSend: user._id,
           userNameSend: userSend.user_name,
-          userIdReceive: user_id_receive,
+          userIdReceive: id,
           userNameReceive: userReceive.user_name,
           roomId: idRandom,
         },

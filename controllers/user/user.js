@@ -122,7 +122,7 @@ const createWallet = async (user_id) => {
 };
 
 exports.userInfomation = async (req, res) => {
-  const token = req.header("authorization");
+  const { id } = req.params;
 
   const user = await User.findOne(
     { token: token },

@@ -1,19 +1,10 @@
 const mongose = require("mongoose");
 
 const RoomSchema = new mongose.Schema({
-  userIdSend: {
-    type: String,
+  user_id: {
+    type: Array,
   },
-  userNameSend: {
-    type: String,
-  },
-  userIdReceive: {
-    type: String,
-  },
-  userNameReceive: {
-    type: String,
-  },
-  roomId: {
+  room_id: {
     type: String,
   },
 });

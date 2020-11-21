@@ -16,6 +16,7 @@ const {
   requireUserNameRegister,
   requirePhoneRegister,
   requireEmailCode,
+  requireId,
 } = require("../controllers/user/validators");
 const {
   requireUserId,
@@ -70,13 +71,20 @@ router.post(
   handleErrors(),
   controllerApiUser.resetEmailCode
 );
-router.get("/user", verify_token, controllerApiUser.userInfomation);
+router.get(
+  "/user/:id",
+  [requireId],
+  handleErrors(),
+  controllerApiUser.userInfomation
+);
 
 // Message -------------------------
 router.get("/message/rooms", verify_token, controllerApiMessage.loadAllRoom);
 router.post(
   "/message/rooms/check",
   verify_token,
+  [requireId],
+  handleErrors(),
   controllerApiMessage.checkRoomAvailable
 );
 router.post(

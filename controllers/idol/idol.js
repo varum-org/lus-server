@@ -2,40 +2,30 @@ const Idol = require("../../models/idol");
 const User = require("../../models/user");
 const cloudinary = require("../../config/cloudinary");
 const fs = require("fs");
-const { handleFailed, handleSuccess, handleList } = require("./middleware");
+const {
+  handleFailed,
+  handleSuccess,
+  handleList,
+} = require("./middleware");
 const Like = require("../../models/like");
 
 exports.list = async (req, res) => {
   const { category } = req.query;
-  const token = req.header("authorization");
-  const user = await User.findOne({ token: token });
-  
-  if (user) {
-    if (!category || category == "all") {
-      const idols = await Idol.find();
+  let idols = await Idol.find();
+  let newIdol = [];
+  switch (category) {
+    case null:
+    case undefined:
+    case "all":
       if (idols) {
-        const responseIdols = await handleResponse(idols);
         const msg = "Get list idol success";
-        return handleList(res, responseIdols, msg);
+        return await handleResponse(req, res, idols, msg);
       } else {
         const msg = "Idols not found";
         return handleFailed(res, msg, 500);
       }
-    } else if (category == "rating") {
-      Idol.find()
-        .sort({ rating: -1 })
-        .limit(10)
-        .then((idols) => handleResponse(idols))
-        .then((responseIdols) => {
-          const msg = "Get list idol success";
-          return handleList(res, responseIdols, msg);
-        })
-        .catch((err) => {
-          console.log(err);
-          return handleFailed(res, err, 500);
-        });
-    } else if (category == "random") {
-      const idols = await Idol.find();
+      break;
+    case "random":
       if (idols) {
         let newIdolList = [];
         var arr = [];
@@ -46,17 +36,26 @@ exports.list = async (req, res) => {
         for (const key of arr) {
           newIdolList.push(idols[key]);
         }
-        const responseIdols = await handleResponse(newIdolList);
         const msg = "Get list idol success";
-        return handleList(res, responseIdols, msg);
+        return await handleResponse(req, res, idols, msg);
       } else {
         const msg = "Get list random idol failure";
         return handleFailed(res, msg, 500);
       }
-    }
-  } else {
-    const msg = "No user provided.";
-    return handleFailed(res, msg, 403);
+      break;
+    case "rating":
+      idols = await Idol.find().sort({ rating: -1 }).limit(10);
+      if (idols) {
+        const msg = "Get list idol success";
+        return await handleResponse(req, res, idols, msg);
+      } else {
+        const msg = "Get list rating idol failure";
+        return handleFailed(res, msg, 500);
+      }
+
+    default:
+      const msg = "No user provided.";
+      return handleFailed(res, msg, 403);
   }
 };
 
@@ -167,20 +166,27 @@ exports.upload_image = async (req, res) => {
   return handleList(res, urls, msg);
 };
 
-async function handleResponse(idols) {
-  const idolsArray = [];
+async function handleResponse(req, res, idols, msg) {
+  const token = req.header("authorization");
+  const user = await User.findOne({ token: token });
+  const newIdol = [];
   for (const data of idols) {
-    let idol = { idol:data };
+    let idol = { idol: data };
     const like = await Like.findOne({
       user_id: data._id,
       idol_id: idol.user_id,
     });
+    idol.liked = null;
     if (like) {
-      idol.liked = like.status;
+      if (token && user) {
+        idol.liked = like.status;
+      }
     } else {
-      idol.liked = false;
+      if (token && user) {
+        idol.liked = false;
+      }
     }
-    idolsArray.push(idol);
+    newIdol.push(idol);
   }
-  return idolsArray;
+  return handleList(res, newIdol, msg);
 }

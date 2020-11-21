@@ -14,10 +14,10 @@ module.exports = {
       messages: msg,
     });
   },
-  handleList(res, idol, msg) {
+  handleList(res, idols, msg) {
     return res.status(200).json({
       success: true,
-      data: idol,
+      data: idols,
       status_code: 200,
       messages: msg,
     });

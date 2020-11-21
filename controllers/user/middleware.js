@@ -24,7 +24,7 @@ module.exports = {
           email: user.email,
           user_name: user.user_name,
           role_id: user.role_id,
-          isActive: user.isActive,
+          email_active: user.email_active,
           image_path: user.image_path,
         },
         token: user.token,

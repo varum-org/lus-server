@@ -1,22 +1,22 @@
 const { check } = require("express-validator");
 
 module.exports = {
-  requireUserIdSendMess: check("userIdSend")
+  requireUserIdSendMess: check("id")
     .trim()
     .isLength({ min: 1 })
-    .withMessage("user_id must be a valid id")
+    .withMessage("id must be a valid id")
     .custom(async (userIdSend) => {
       if (!userIdSend.match(/^[0-9a-fA-F]{24}$/)) {
-        throw new Error("userIdSend not match!");
+        throw new Error("id not match!");
       }
     }),
-  requireUserIdReceiveMess: check("user_id_receive")
+  requireUserIdReceiveMess: check("id")
     .trim()
     .isLength({ min: 1 })
-    .withMessage("user_id must be a valid id")
+    .withMessage("id must be a valid id")
     .custom(async (userIdReceive) => {
       if (!userIdReceive.match(/^[0-9a-fA-F]{24}$/)) {
-        throw new Error("userIdReceive not match!");
+        throw new Error("id not match!");
       }
     }),
 };

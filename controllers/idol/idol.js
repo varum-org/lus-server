@@ -2,11 +2,7 @@ const Idol = require("../../models/idol");
 const User = require("../../models/user");
 const cloudinary = require("../../config/cloudinary");
 const fs = require("fs");
-const {
-  handleFailed,
-  handleSuccess,
-  handleList,
-} = require("./middleware");
+const { handleFailed, handleSuccess, handleList } = require("./middleware");
 const Like = require("../../models/like");
 
 exports.list = async (req, res) => {
@@ -176,6 +172,17 @@ async function handleResponse(req, res, idols, msg) {
       user_id: data._id,
       idol_id: idol.user_id,
     });
+    const profile = await User.findOne(
+      { _id: data.user_id },
+      {
+        password: 0,
+        device_token: 0,
+        token: 0,
+        email_code: 0,
+        email_code_expires: 0,
+      }
+    );
+    idol.user = profile;
     idol.liked = null;
     if (like) {
       if (token && user) {

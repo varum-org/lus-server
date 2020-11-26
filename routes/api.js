@@ -100,14 +100,14 @@ router.get("/message/:id", verify_token, controllerApiMessage.messageDetail);
 router.get("/idols", controllerIdol.list);
 router.get("/idols/search", [search], handleErrors(), controllerIdol.search);
 router.post(
-  "/idols",
+  "/idol",
   verify_token,
   [requireNickName, requireImageGallery, requireServices],
   handleErrors(),
   controllerIdol.register
 );
 router.put(
-  "/idols",
+  "/idol",
   verify_token,
   [requireUserId, requireNickName, requireImageGallery, requireServices],
   handleErrors(),
@@ -116,7 +116,7 @@ router.put(
 router.post(
   "/uploads",
   verify_token,
-  upload.array("image_gallery", 10),
+  upload.array("he", 10),
   [images],
   handleErrors(),
   controllerIdol.upload_image

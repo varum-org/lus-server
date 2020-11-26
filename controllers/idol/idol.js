@@ -80,7 +80,7 @@ exports.register = async (req, res) => {
 
     idol.save((err, docs) => {
       if (err) {
-        return handleFailed(res, err);
+        return handleFailed(res, err,500);
       }
       user.role_id = 2;
       user.save();
@@ -90,7 +90,7 @@ exports.register = async (req, res) => {
     });
   } else {
     const msg = "User not found or User has been an Idol!";
-    return handleFailed(res, msg);
+    return handleFailed(res, msg, 500);
   }
 };
 
@@ -103,8 +103,8 @@ exports.update = async (req, res) => {
     image_gallery,
     services,
   } = req.body;
+  
   const token = req.header("authorization");
-
   const user = await User.findOne({ token: token });
   const idol = await Idol.findOne({ user_id: user._id });
   if (idol) {

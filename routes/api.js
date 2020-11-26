@@ -109,7 +109,7 @@ router.post(
 router.put(
   "/idol",
   verify_token,
-  [requireUserId, requireNickName, requireImageGallery, requireServices],
+  [requireNickName, requireImageGallery, requireServices],
   handleErrors(),
   controllerIdol.update
 );

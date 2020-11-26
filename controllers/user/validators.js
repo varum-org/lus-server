@@ -17,6 +17,8 @@ module.exports = {
       const existingUser = await User.findOne({ email: email });
       if (!existingUser) {
         throw new Error("Email not found!");
+      } else if (existingUser.email_active != 1) {
+        throw new Error("Email is not activated");
       }
     }),
   requirePasswordLogin: check("password")

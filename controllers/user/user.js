@@ -84,14 +84,11 @@ exports.verifyEmail = async (req, res) => {
             return handleSuccess(res, succ, mess);
           }
         });
-      } else {
-        const mess = "Verify email failure! 111";
-        return handleFailed(res, mess);
       }
     });
   } else {
-    const mess = "Verify email failure!";
-    return handleFailed(res, mess);
+    const mess = "Email code has expires or invalid!";
+    return handleFailed(res, mess, 500);
   }
 };
 

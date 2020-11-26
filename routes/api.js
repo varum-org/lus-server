@@ -114,7 +114,7 @@ router.put(
   controllerIdol.update
 );
 router.post(
-  "/idols/images",
+  "/uploads",
   verify_token,
   upload.array("image_gallery", 10),
   [images],

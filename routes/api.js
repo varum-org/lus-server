@@ -61,7 +61,7 @@ router.post(
 );
 router.post(
   "/user/verify_email",
-  [requireEmailRegister, requireVerifyEmail, requireEmailCode],
+  [requireVerifyEmail, requireEmailCode],
   handleErrors(),
   controllerApiUser.verifyEmail
 );

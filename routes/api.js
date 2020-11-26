@@ -115,8 +115,7 @@ router.put(
 );
 router.post(
   "/uploads",
-  verify_token,
-  upload.array("he", 10),
+  upload.array("image_gallery", 10),
   [images],
   handleErrors(),
   controllerIdol.upload_image

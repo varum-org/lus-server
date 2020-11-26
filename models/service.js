@@ -9,6 +9,10 @@ const ServiceSchema = new mongose.Schema({
     type: String,
     required: true,
   },
+  service_description: {
+    type: String,
+    required: true,
+  },
 });
 
 const Service = mongose.model("Service", ServiceSchema);

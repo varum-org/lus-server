@@ -159,8 +159,9 @@ router.patch(
 );
 
 // Service -------------------------
-router.get("/services", verify_token, controllerService.list);
-router.post("/services", controllerService.add);
+router.get("/services", controllerService.list);
+router.post("/service", controllerService.add);
+router.patch("/service/:id", controllerService.update);
 
 // Like -------------------------
 router.get("/like", verify_token, controllerLike.like);

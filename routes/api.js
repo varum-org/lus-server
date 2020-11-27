@@ -37,6 +37,8 @@ const {
   requireStartDate,
   requireOrderUpdate,
 } = require("../controllers/order/validators");
+
+const { requireServiceCode } = require('../controllers/service/validators')
 const multer = require("multer");
 const upload = multer({ dest: "public/image/" });
 
@@ -159,7 +161,7 @@ router.patch(
 
 // Service -------------------------
 router.get("/services", controllerService.list);
-router.post("/service", controllerService.add);
+router.post("/service",[requireServiceCode], controllerService.add);
 router.patch("/service/:id", controllerService.update);
 
 // Like -------------------------

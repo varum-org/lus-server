@@ -13,6 +13,10 @@ const ServiceSchema = new mongose.Schema({
     type: String,
     required: true,
   },
+  service_image_path:{
+    type: String,
+    required: true,
+  }
 });
 
 const Service = mongose.model("Service", ServiceSchema);

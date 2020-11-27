@@ -13,7 +13,7 @@ exports.list = async (req, res) => {
 };
 
 exports.add = async (req, res) => {
-  const { service_code, service_name, service_description } = req.body;
+  const { service_code, service_name, service_description, service_image_path } = req.body;
   const existService = await Service.findOne({ service_code: service_code });
   if (existService) {
     const msg = "Service code already exists";
@@ -23,6 +23,7 @@ exports.add = async (req, res) => {
     service_code: service_code,
     service_name: service_name,
     service_description: service_description,
+    service_image_path: service_image_path,
   });
 
   service.save((err, docs) => {

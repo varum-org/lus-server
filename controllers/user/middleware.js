@@ -37,9 +37,7 @@ module.exports = {
   handleGetUserSuccess(res, user, mess) {
     return res.json({
       success: true,
-      data: {
-        user
-      },
+      data: user,
       status_code: 200,
       messages: mess,
     });

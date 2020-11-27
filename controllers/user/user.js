@@ -10,6 +10,7 @@ const {
   handleGetUserSuccess,
 } = require("./middleware");
 const Wallet = require("../../models/wallet");
+const Service = require("../../models/service");
 
 // Check login
 exports.login = async (req, res) => {
@@ -132,8 +133,11 @@ exports.userInfomation = async (req, res) => {
     }
   );
   if (user) {
+    const services = await Service.find({});
+    const newUser = JSON.parse(JSON.stringify(user));
+    newUser.services = services
     const mess = "Get information successfully";
-    handleGetUserSuccess(res, user, mess);
+    handleGetUserSuccess(res, { user: newUser }, mess);
   } else {
     const mess = "User not found!";
     handleFailed(res, mess, 403);

@@ -13,7 +13,12 @@ exports.list = async (req, res) => {
 };
 
 exports.add = async (req, res) => {
-  const { service_code, service_name, service_description, service_image_path } = req.body;
+  const {
+    service_code,
+    service_name,
+    service_description,
+    service_image_path,
+  } = req.body;
   const existService = await Service.findOne({ service_code: service_code });
   if (existService) {
     const msg = "Service code already exists";
@@ -37,6 +42,13 @@ exports.add = async (req, res) => {
 };
 exports.update = async (req, res) => {
   const { id } = req.params;
+  const { service_code } = req.body;
+  const service = await Service.findOne({service_code:service_code});
+  if (service && service._id != id) {
+    const msg = "Code already exist another service!";
+    return handleFailed(res, msg);
+  }
+
   await Service.findByIdAndUpdate({ _id: id }, req.body, (err, docs) => {
     if (err) {
       const msg = "Something went wrong!";

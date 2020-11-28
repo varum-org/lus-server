@@ -26,15 +26,15 @@ exports.sendEmail = async (email, res, code) => {
       accessToken: accessToken,
     },
     tls: {
-      rejectUnauthorized: false
-    }
+      rejectUnauthorized: false,
+    },
   });
 
   let mailDetails = {
     from: process.env.EMAIL,
     to: email,
     subject: "Lovely: verify email address",
-    html: `<h3>Please confirm your email address </h3> </hr> <h5>Your code: </h5> <h1>${code}</h1>`,
+    html: mailView(code),
     generateTextFromHTML: true,
   };
 
@@ -49,3 +49,17 @@ exports.sendEmail = async (email, res, code) => {
     }
   });
 };
+
+function mailView(code) {
+  return `
+  <div style="padding: 5px;
+            text-align: center;
+            background: #FF3146;
+            color: white;
+            font-size: 20px;">
+    <h1 style="text-align: center; font-weight: bold; font-family: Seogoe UI; color: white">Lus</h1>
+    <p style="text-align: center; color: white">Thế giới người yêu</p>
+  </div>
+    <h3>Please confirm your email address </h3> </hr> <h5>Your code: </h5> <h1 style="text-align: center;">${code}</h1>
+  `;
+}

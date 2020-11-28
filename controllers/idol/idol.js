@@ -8,7 +8,7 @@ const Like = require("../../models/like");
 exports.list = async (req, res) => {
   const { category } = req.query;
   let idols = await Idol.find();
-  let newIdol = [];
+
   switch (category) {
     case null:
     case undefined:
@@ -154,6 +154,7 @@ exports.upload_image = async (req, res) => {
   for (const file of files) {
     const { path } = file;
     const newPath = await uploader(path);
+    console.log(newPath);
     urls.push(newPath.url);
     fs.unlinkSync(path);
   }

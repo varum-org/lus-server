@@ -154,8 +154,8 @@ exports.upload_image = async (req, res) => {
   for (const file of files) {
     const { path } = file;
     const newPath = await uploader(path);
-    console.log(newPath);
-    urls.push(newPath.url);
+
+    urls.push(newPath.secure_url);
     fs.unlinkSync(path);
   }
 

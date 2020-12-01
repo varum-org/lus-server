@@ -38,7 +38,7 @@ const {
   requireOrderUpdate,
 } = require("../controllers/order/validators");
 
-const { requireServiceCode } = require('../controllers/service/validators')
+const { requireServiceCode } = require("../controllers/service/validators");
 const multer = require("multer");
 const upload = multer({ dest: "public/image/" });
 
@@ -142,12 +142,12 @@ router.delete(
 
 // Order -------------------------
 router.get("/orders", verify_token, controllerOrder.list);
-router.get("idol/orders", verify_token, controllerOrder.list_for_idol);
+router.get("/idol/orders", verify_token, controllerOrder.list_for_idol);
 router.post(
-  "/orders",
+  "/user/order",
+  verify_token,
   [requireOrder, requireStartDate],
   handleErrors(),
-  verify_token,
   controllerOrder.add
 );
 router.delete("/orders", verify_token, controllerOrder.delete);
@@ -161,7 +161,7 @@ router.patch(
 
 // Service -------------------------
 router.get("/services", controllerService.list);
-router.post("/service",[requireServiceCode], controllerService.add);
+router.post("/service", [requireServiceCode], controllerService.add);
 router.patch("/service/:id", controllerService.update);
 
 // Like -------------------------

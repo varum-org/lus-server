@@ -3,6 +3,9 @@ const OrderDetail = require("../../models/order_detail");
 const Wallet = require("../../models/wallet");
 const User = require("../../models/user");
 const { handleSuccess, handleFailed, handleList } = require("./middleware");
+const { serve } = require("swagger-ui-express");
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
 
 exports.list = async (req, res) => {
   const { status } = req.query;
@@ -63,52 +66,41 @@ exports.list_for_idol = async (req, res) => {
 };
 
 exports.add = async (req, res) => {
-  const {
-    user_email,
-    user_phone,
-    user_name,
-    user_address,
-    idol_id,
-    total,
-    payment_method,
-    start_date,
-    note,
-    services,
-  } = req.body;
+  const { idol_id, payment_method, start_date, note, services } = req.body;
 
   const token = req.header("authorization");
   const user = await User.findOne({ token: token });
-
-  const order = new Order({
-    user_id: user._id,
-    user_email: user_email,
-    user_phone: user_phone,
-    user_name: user_name,
-    user_address: user_address,
-    idol_id: idol_id,
-    total: total,
-    payment_method: payment_method,
-    status: 0,
-    start_date: start_date,
-    note: note,
-  });
-  order.save((err, orderResult) => {
-    if (!err) {
-      const order_detail = new OrderDetail({
-        order_id: orderResult._id,
-        idol_id: idol_id,
-        services: services,
-      });
-      order_detail.save((err) => {
-        if (!err) {
-          const msg = "Order success";
-          return handleSuccess(res, orderResult, msg);
-        } else {
-          return handleFailed(res, err);
-        }
-      });
-    }
-  });
+  const wallet = await Wallet.findOne({ user_id: user._id });
+  if (wallet.balance > getTotalOrder(services)) {
+    const order = new Order({
+      user_id: user._id,
+      user_email: user.email,
+      user_phone: user.phone,
+      user_name: user.user_name,
+      user_address: user.address,
+      idol_id: idol_id,
+      payment_method: payment_method,
+      status: 0,
+      start_date: start_date,
+      note: note,
+    });
+    order.save((err, orderResult) => {
+      if (!err) {
+        const result = flattenServices(orderResult._id, idol_id, services);
+        OrderDetail.insertMany(result, (err, docs) => {
+          if (!err) {
+            const msg = "Order success";
+            return handleSuccess(res, orderResult, msg);
+          } else {
+            return handleFailed(res, err, 500);
+          }
+        });
+      } else handleFailed(res, err.errors, 500);
+    });
+  } else {
+    const msg = "Customer not enough Xu.";
+    return handleFailed(res, msg, 500);
+  }
 };
 
 exports.delete = async (req, res) => {
@@ -123,7 +115,7 @@ exports.delete = async (req, res) => {
     });
   } else {
     const msg = "Delete order failure";
-    return handleFailed(res, msg);
+    return handleFailed(res, msg, 500);
   }
 };
 
@@ -143,14 +135,14 @@ exports.update = async (req, res) => {
           return handleSuccess(res, result, msg);
         } else {
           const msg = "Update order failure";
-          return handleFailed(res, msg);
+          return handleFailed(res, msg, 500);
         }
       });
     } else {
       await Order.findOneAndDelete({ _id: order_id }, (err) => {
         if (!err) {
           const msg = "Customer not enough Xu. Order has been delete";
-          return handleFailed(res, msg);
+          return handleFailed(res, msg, 500);
         }
       });
     }
@@ -162,8 +154,31 @@ exports.update = async (req, res) => {
         return handleSuccess(res, result, msg);
       } else {
         const msg = "Update order failure";
-        return handleFailed(res, msg);
+        return handleFailed(res, msg, 500);
       }
     });
   }
+};
+
+const getTotalOrder = (services) => {
+  let sum = 0;
+  for (const { service } of services) {
+    sum += service.service_price;
+  }
+  return sum;
+};
+const flattenServices = (order_id, idol_id, data) => {
+  let arr = [];
+  data.map((e) => {
+    e._id = ObjectId();
+    arr.push({
+      _id: ObjectId(),
+      order_id: order_id,
+      idol_id: idol_id,
+      service_code: e.service.service_code,
+      service_price: e.service.service_price,
+      hour: e.hour,
+    });
+  });
+  return arr;
 };

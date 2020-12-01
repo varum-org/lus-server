@@ -9,9 +9,13 @@ const OrderDetailSchema = new mongose.Schema({
     type: String,
     required: true,
   },
-  services: {
-    type: Array,
-    required: true
+  service_code: {
+    type: Number,
+    required: true,
+  },
+  service_price: {
+    type: Number,
+    required: true,
   },
 });
 

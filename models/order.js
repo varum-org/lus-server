@@ -31,13 +31,9 @@ const OrderSchema = new mongose.Schema({
   discount: {
     type: Number,
   },
-  total: {
-    type: Number,
-    required: true,
-  },
   payment_method: {
     type: String,
-    required: true
+    required: true,
   },
   status: {
     type: Number,

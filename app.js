@@ -33,8 +33,8 @@ mongose
 
 const { async } = require("crypto-random-string");
 //Config Socket io
-const Room = require("../lus-sever/models/room");
-const User = require("../lus-sever/models/user");
+const Room = require("./models/room");
+const User = require("./models/user");
 io.on("connection", (socket) => {
   socket.on("join", async (id) => {
     const user = await User.findOne({ _id: id });
@@ -52,22 +52,20 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("client send message", (data) => {
+  socket.on("clientSendMessage", (data) => {
     const message = JSON.parse(data);
     const roomId = message.room_id;
     Message.create(
       {
-        roomId: message.room_id,
-        userId: message.user_id,
+        room_id: message.room_id,
+        user_id: message.user_id,
         content: message.content,
       },
       (err, docs) => {
         if (err) {
           res.json(err);
         } else {
-          socket.broadcast
-            .in(roomId)
-            .emit("server send message", JSON.stringify(docs));
+          io.to(roomId).emit("serverSendMessage", JSON.stringify(docs));
         }
       }
     );
@@ -86,7 +84,6 @@ io.on("connection", (socket) => {
         });
       }
     });
-    socket.broadcast.to(`${roomName}`).emit("userLeftChatRoom", userName);
   });
   socket.on("disconnect", () => {
     console.log("One of sockets disconnected from our server.");

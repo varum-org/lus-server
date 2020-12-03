@@ -96,7 +96,7 @@ router.post(
   handleErrors(),
   controllerApiMessage.createRoom
 );
-router.get("/message/:id", verify_token, controllerApiMessage.messageDetail);
+router.get("/room/:id", verify_token, controllerApiMessage.messageDetail);
 
 // Idol -------------------------
 router.get("/idols", controllerIdol.list);

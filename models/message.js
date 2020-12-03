@@ -1,13 +1,10 @@
 const mongose = require("mongoose");
 
 const MessSchema = new mongose.Schema({
-  roomId: {
+  room_id: {
     type: String,
   },
-  userIdSend: {
-    type: String,
-  },
-  userIdReceive: {
+  user_id: {
     type: String,
   },
   content: {

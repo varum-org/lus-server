@@ -1,23 +1,17 @@
 module.exports = {
   handleSuccess(res, room, msg) {
-    return res.json({
+    return res.status(200).json({
       success: true,
-      data: {
-        userIdSend: room.userIdSend,
-        userNameSend: room.userNameSend,
-        userIdReceive: room.userIdReceive,
-        userNameReceive: room.userNameReceive,
-        roomId: room.roomId,
-      },
+      data: room,
       status_code: 200,
       messages: msg,
     });
   },
-  handleFailed(res, msg) {
-    return res.json({
+  handleFailed(res, msg, code) {
+    return res.status(code).json({
       success: false,
       data: {},
-      status_code: 500,
+      status_code: code,
       messages: msg,
     });
   },

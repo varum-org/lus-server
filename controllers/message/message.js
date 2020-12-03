@@ -7,127 +7,41 @@ const Message = require("../../models/message");
 exports.loadAllRoom = async (req, res) => {
   const token = req.header("authorization");
   const user = await User.findOne({ token: token });
-
-  const filter1 = { userIdSend: user._id };
-  const filter2 = { userIdReceive: user._id };
-
-  const getRoom1 = await Room.find(filter1);
-  const getRoom2 = await Room.find(filter2);
-
-  if (getRoom1.length == 0 && getRoom2.length == 0) {
-    const msg = "User don't have any room chat";
-    return handleFailed(res, msg);
+  if (!user) {
+    return handleFailed(res, "Not found user!", 401);
   }
-
-  let roomArr = [];
-
-  if (getRoom1) {
-    for (const key of getRoom1) {
-      let nameObject = {};
-      nameObject.name = key.userNameReceive;
-      nameObject.userIdReceive = key.userIdReceive;
-      nameObject.roomId = key.roomId;
-      roomArr.push(nameObject);
-    }
-  }
-  if (getRoom2) {
-    for (const key of getRoom2) {
-      let nameObject = {};
-      nameObject.name = key.userNameSend;
-      nameObject.userIdReceive = key.userIdSend;
-      nameObject.roomId = key.roomId;
-      roomArr.push(nameObject);
-    }
-  }
-
-  var result = roomArr.filter(function (a) {
-    var key = a.roomId;
-    if (!this[key]) {
-      this[key] = true;
-      return true;
-    }
-  }, Object.create(null));
-
-  return res.json(result);
-};
-
-//Check room by userIdSend and userIdReceive
-exports.checkRoomAvailable = async (req, res) => {
-  const { id } = req.body;
-  const token = req.header("authorization");
-  const user = await User.findOne({ token: token });
-
-  if (id.match(/^[0-9a-fA-F]{24}$/)) {
-    const filter1 = { userIdSend: user._id, userIdReceive: id };
-    const filter2 = { userIdSend: id, userIdReceive: user._id };
-    const room1 = await Room.findOne(filter1);
-    const room2 = await Room.findOne(filter2);
-
-    if (room1) {
-      const roomId = room1.roomId;
-      return res.json({
-        status: false,
-        roomId: roomId,
-      });
-    } else if (room2) {
-      const roomId = room2.roomId;
-      return res.json({
-        status: false,
-        roomId: roomId,
-      });
-    } else {
-      return res.json({
-        status: true,
-        roomId: "",
-      });
-    }
-  } else {
-    return res.json({
-      status: false,
-      roomId: "",
-    });
-  }
+  const filter = { user_id: user._id };
+  const rooms = await Room.find(filter);
+  return handleSuccess(res, rooms, "Get room success!");
 };
 
 // Create room
 exports.createRoom = async (req, res) => {
   const { id } = req.body;
   const token = req.header("authorization");
-  const user = await User.findOne({ token: token });
-
-  const filter = { user_id: [user._id, id] };
-
+  const userSend = await User.findOne({ token: token });
+  const userReceive = await User.findById(id);
+  if (!userSend && !userReceive) {
+    handleFailed(res, "Not found user!", 401);
+  }
+  const filter = { user_id: [userSend._id, userReceive._id] };
   const room = await Room.findOne(filter);
 
-  const msg = "Create room success";
-  if (room1) {
-    handleSuccess(res, room1, msg);
-  } else if (room2) {
-    handleSuccess(res, room2, msg);
+  if (room) {
+    const msg = "Get room success";
+    handleSuccess(res, room, msg);
   } else {
-    let idRandom = uuidv4();
-    const userSend = await User.findById(user._id);
-    const userReceive = await User.findById(id);
-
-    if (userSend && userReceive) {
-      Room.create(
-        {
-          userIdSend: user._id,
-          userNameSend: userSend.user_name,
-          userIdReceive: id,
-          userNameReceive: userReceive.user_name,
-          roomId: idRandom,
-        },
-        function (err, success) {
-          if (err) {
-            handleFailed(res, err);
-          } else {
-            //handle success
-            handleSuccess(res, success, msg);
-          }
-        }
-      );
-    }
+    const newRoom = new Room({
+      user_id: [userSend._id, userReceive._id],
+    });
+    newRoom.save((err, docs) => {
+      if (!err) {
+        const msg = "Create room success";
+        handleSuccess(res, docs, msg);
+      } else {
+        handleFailed(res, err, 500);
+      }
+    });
   }
 };
 
@@ -143,3 +57,18 @@ exports.messageDetail = async (req, res) => {
     }
   });
 };
+
+// exports.checkRoomAvailable = async (req, res) => {
+//   const { id } = req.body;
+//   const token = req.header("authorization");
+//   const userSend = await User.findOne({ token: token });
+//   const userReceive = await User.findById(id);
+//   if (!userSend && !userReceive) {
+//     handleFailed(res, "Not found user!", 401);
+//   }
+//   const filter = { user_id: [userSend._id, userSend._id] };
+//   const room = await Room.findOne(filter);
+//   if (room) {
+//   } else {
+//   }
+// };

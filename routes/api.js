@@ -81,16 +81,16 @@ router.get(
 );
 
 // Message -------------------------
-router.get("/message/rooms", verify_token, controllerApiMessage.loadAllRoom);
+router.get("/rooms", verify_token, controllerApiMessage.loadAllRoom);
+// router.post(
+//   "/message/rooms/check",
+//   verify_token,
+//   [requireUserIdReceiveMess],
+//   handleErrors(),
+//   controllerApiMessage.checkRoomAvailable
+// );
 router.post(
-  "/message/rooms/check",
-  verify_token,
-  [requireId],
-  handleErrors(),
-  controllerApiMessage.checkRoomAvailable
-);
-router.post(
-  "/message/rooms",
+  "/room",
   verify_token,
   [requireUserIdReceiveMess],
   handleErrors(),

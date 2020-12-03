@@ -31,42 +31,65 @@ mongose
   })
   .catch((err) => console.log(err));
 
+const { async } = require("crypto-random-string");
 //Config Socket io
+const Room = require("../lus-sever/models/room");
+const User = require("../lus-sever/models/user");
 io.on("connection", (socket) => {
-  socket.emit("askForUserId");
-  socket.on("create room", (msg) => {
-    socket.broadcast.emit("broadcast", "Hello");
+  socket.on("join", async (id) => {
+    const user = await User.findOne({ _id: id });
+    const filter = { user_id: user._id };
+    Room.find(filter, (err, docs) => {
+      if (err) {
+        console.log(`error:` + err);
+      } else {
+        docs.forEach((element) => {
+          socket.join(element._id);
+          io.to(element._id).emit("online", user._id);
+          console.log(`A user connect to room: ${element._id}`);
+        });
+      }
+    });
   });
 
-  var roomMap = {};
-  socket.on("join", (room) => {
-    roomMap["roomId"] = room;
-    socket.join(room);
-    // console.log(`A user connect to room: ${room}`)
-  });
-
-  socket.on("chat message", (message) => {
-    const roomId = message.roomId;
-    const messageData = message.content;
-    const userIdSend = message.userIdSend;
-    const userIdReceive = message.userIdReceive;
-    io.in(roomMap.roomId).emit("mymessage", userIdSend, messageData);
-
+  socket.on("client send message", (data) => {
+    const message = JSON.parse(data);
+    const roomId = message.room_id;
     Message.create(
       {
-        roomId: roomId,
-        userIdSend: userIdSend,
-        userIdReceive: userIdReceive,
-        content: messageData,
+        roomId: message.room_id,
+        userId: message.user_id,
+        content: message.content,
       },
-      function (err, success) {
+      (err, docs) => {
         if (err) {
           res.json(err);
         } else {
-          // console.log(success)
+          socket.broadcast
+            .in(roomId)
+            .emit("server send message", JSON.stringify(docs));
         }
       }
     );
+  });
+  socket.on("offline", async (id) => {
+    const user = await User.findOne({ _id: id });
+    const filter = { user_id: user._id };
+    Room.find(filter, (err, docs) => {
+      if (err) {
+        console.log(`error:` + err);
+      } else {
+        docs.forEach((element) => {
+          socket.leave(element._id);
+          socket.broadcast.to(element._id).emit("offline", user._id);
+          console.log(`A user disconnect to room: ${element._id}`);
+        });
+      }
+    });
+    socket.broadcast.to(`${roomName}`).emit("userLeftChatRoom", userName);
+  });
+  socket.on("disconnect", () => {
+    console.log("One of sockets disconnected from our server.");
   });
 });
 

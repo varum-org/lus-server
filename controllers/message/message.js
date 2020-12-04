@@ -11,7 +11,7 @@ exports.loadAllRoom = async (req, res) => {
   if (user) {
     const filter = { user_id: user._id };
     const rooms = await Room.find(filter);
-    const newRooms = await handleResponseRoom(rooms);
+    const newRooms = await handleResponseRoom(user, rooms);
     return handleSuccess(res, newRooms, "Get room success!");
   } else {
     return handleFailed(res, "Not found user!", 401);
@@ -62,16 +62,30 @@ exports.messageDetail = async (req, res) => {
   });
 };
 
-const handleResponseRoom = async (rooms) => {
+const handleResponseRoom = async (user, rooms) => {
   let arr = [];
   for (const itemData of rooms) {
     let newRoom = { room: itemData };
-    const users = await User.find({ _id: { $in: itemData.user_id } });
-
-    newRoom.users = users;
+    const user_id = handleUserIds(user, [...itemData.user_id]);
+    const userReceive = await User.findOne(
+      { _id: user_id },
+      {
+        password: 0,
+        device_token: 0,
+        token: 0,
+        email_code: 0,
+        email_code_expires: 0,
+      }
+    );
+    newRoom.userReceive = userReceive;
     arr.push(newRoom);
   }
   return arr;
+};
+
+const handleUserIds = (user, userIds) => {
+  userIds.shift(user._id);
+  return userIds;
 };
 // exports.checkRoomAvailable = async (req, res) => {
 //   const { id } = req.body;

@@ -51,11 +51,10 @@ exports.createRoom = async (req, res) => {
 
 exports.messageDetail = async (req, res) => {
   const { id } = req.params;
-  const filter = { roomId: id };
+  const filter = { room_id: id };
   await Message.find(filter, (err, messages) => {
     if (!err) {
       const msg = "Get messages success";
-      console.log(messages);
       handleSuccess(res, messages, msg);
     } else {
       handleFailed(res, err, 500);

@@ -87,17 +87,3 @@ const handleUserIds = (user, userIds) => {
   userIds.shift(user._id);
   return userIds;
 };
-// exports.checkRoomAvailable = async (req, res) => {
-//   const { id } = req.body;
-//   const token = req.header("authorization");
-//   const userSend = await User.findOne({ token: token });
-//   const userReceive = await User.findById(id);
-//   if (!userSend && !userReceive) {
-//     handleFailed(res, "Not found user!", 401);
-//   }
-//   const filter = { user_id: [userSend._id, userSend._id] };
-//   const room = await Room.findOne(filter);
-//   if (room) {
-//   } else {
-//   }
-// };

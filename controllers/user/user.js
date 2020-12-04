@@ -65,6 +65,7 @@ exports.verifyEmail = async (req, res) => {
   const userArr = await User.find({ email: email });
 
   const user = userArr[userArr.length - 1];
+
   if (
     user &&
     email_code == user.email_code &&

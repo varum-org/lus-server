@@ -53,6 +53,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("clientSendMessage", (data) => {
+    console.log(data);
     const message = JSON.parse(data);
     const roomId = message.room_id;
     Message.create(

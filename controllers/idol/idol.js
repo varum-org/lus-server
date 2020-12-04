@@ -7,7 +7,7 @@ const Like = require("../../models/like");
 
 exports.list = async (req, res) => {
   const { category } = req.query;
-  let idols = await Idol.find();
+  let idols = await Idol.find().limit(10);
 
   switch (category) {
     case null:
@@ -80,7 +80,7 @@ exports.register = async (req, res) => {
 
     idol.save((err, docs) => {
       if (err) {
-        return handleFailed(res, err,500);
+        return handleFailed(res, err, 500);
       }
       user.role_id = 2;
       user.save();
@@ -103,7 +103,7 @@ exports.update = async (req, res) => {
     image_gallery,
     services,
   } = req.body;
-  
+
   const token = req.header("authorization");
   const user = await User.findOne({ token: token });
   const idol = await Idol.findOne({ user_id: user._id });

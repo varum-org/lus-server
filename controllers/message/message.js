@@ -3,6 +3,7 @@ const User = require("../../models/user");
 const { v4: uuidv4 } = require("uuid");
 const { handleSuccess, handleFailed } = require("./middleware");
 const Message = require("../../models/message");
+const { async } = require("crypto-random-string");
 
 exports.loadAllRoom = async (req, res) => {
   const token = req.header("authorization");
@@ -10,7 +11,8 @@ exports.loadAllRoom = async (req, res) => {
   if (user) {
     const filter = { user_id: user._id };
     const rooms = await Room.find(filter);
-    return handleSuccess(res, rooms, "Get room success!");
+    const newRooms = await handleResponseRoom(rooms);
+    return handleSuccess(res, newRooms, "Get room success!");
   } else {
     return handleFailed(res, "Not found user!", 401);
   }
@@ -61,6 +63,17 @@ exports.messageDetail = async (req, res) => {
   });
 };
 
+const handleResponseRoom = async (rooms) => {
+  let arr = [];
+  for (const itemData of rooms) {
+    let newRoom = { room: itemData };
+    const users = await User.find({ _id: { $in: itemData.user_id } });
+
+    newRoom.users = users;
+    arr.push(newRoom);
+  }
+  return arr;
+};
 // exports.checkRoomAvailable = async (req, res) => {
 //   const { id } = req.body;
 //   const token = req.header("authorization");

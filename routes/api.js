@@ -108,6 +108,7 @@ router.post(
   handleErrors(),
   controllerIdol.register
 );
+router.get("/idol/:id", handleErrors(), controllerIdol.detail);
 router.put(
   "/idol",
   verify_token,

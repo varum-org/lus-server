@@ -52,13 +52,14 @@ module.exports = {
         }
       }
     }),
-  search: check("nick_name")
+  search: check("name")
     .trim()
     .custom(async (_, { req }) => {
       const { rating } = req.query;
-      if (isNaN(rating)) {
-        throw new Error("Rating must be a number");
-      }
+      if (rating)
+        if (isNaN(rating)) {
+          throw new Error("Rating must be a number");
+        }
     }),
   images: check("image_gallery").custom(async (_, { req }) => {
     const images = req.files;

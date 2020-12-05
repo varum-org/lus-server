@@ -116,6 +116,6 @@ app.get("*", (req, res) =>
   })
 );
 
-http.listen(PORT, function () {
+http.listen(PORT, async function () {
   console.log(`Running on http://${HOST}:${PORT}`);
 });

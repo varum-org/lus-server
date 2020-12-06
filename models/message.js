@@ -10,6 +10,14 @@ const MessSchema = new mongose.Schema({
   content: {
     type: String,
   },
+  created_date: {
+    type: Date,
+    default: Date.now(),
+  },
+  is_read: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const Message = mongose.model("Message", MessSchema);

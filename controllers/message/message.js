@@ -25,7 +25,6 @@ exports.createRoom = async (req, res) => {
   const userSend = await User.findOne({ token: token });
   const userReceive = await User.findById(id);
   if (userSend && userReceive) {
-    console.log("User:" + userSend);
     const filter = { user_id: [userSend._id, userReceive._id] };
     const room = await Room.findOne(filter);
     if (room) {

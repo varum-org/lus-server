@@ -1,0 +1,78 @@
+<div class="container-fluid">
+
+  <!-- Page Heading -->
+  <h1 class="h3 mb-2 text-gray-800">Quản lý Idol</h1>
+  <p class="mb-4">Danh sách tất cả Idol trong hệ thống</p>
+
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <a href="/product/create" class="btn btn-info btn-sm">Thêm Idol</a>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Ảnh</th>
+              <th>Tên </th>
+              <th>Ngày sinh</th>
+              <th>Địa chỉ</th>
+              <th>Rating</th>
+              <th>Status</th>
+              <th>Chỉnh sửa</th>
+            </tr>
+          </thead>
+          <tfoot>
+            <tr>
+              <th>#</th>
+              <th>Ảnh</th>
+              <th style="min-width:100px">Tên </th>
+              <th style="min-width:150px">Ngày sinh</th>
+              <th style="min-width:120px">Địa chỉ</th>
+              <th>Rating</th>
+              <th>Status</th>
+              <th style="min-width:120px">Chỉnh sửa</th>
+            </tr>
+          </tfoot>
+          <tbody id="myTable">
+            {{#each idols}}
+            <tr>
+              <td>{{this.index}}</td>
+              <td>
+                <a href="/idol/{{$this._id}}">
+                  <img class="rounded" width="50" height="50"
+                    onerror="this.src='https://image.freepik.com/free-vector/cute-chibi-kawaii-characters_146706-51.jpg';"
+                    src="https://res.cloudinary.com/employeern/image/upload/w_50,h_50,c_fill/{{this.avatar}}" />
+                </a>
+              </td>
+              <td>{{this.name}}</td>
+              <td>{{this.birthday}}</td>
+              <td>{{this.address}}</td>
+              <td>{{this.rating}} - <i class="fa fa-star" style="color: rgb(238, 138, 8);" aria-hidden="true"></i></td>
+              <td>
+                {{#ifCond this.status 0}}
+                  <i class="fas fa-circle fa-xs" style="color: rgb(255, 0, 0);"></i>
+                {{else}}
+                  {{#ifCond this.status 1}}
+                  <i class="fas fa-circle fa-xs" style="color: rgb(5, 189, 14);"></i>
+                  {{else}}
+                  <i class="fas fa-circle fa-xs" style="color: rgb(0, 0, 0);"></i>
+                  {{/ifCond}}
+                {{/ifCond}}
+              </td>
+              <td>
+                <a href="/admin/idol/{{this.id}}" class="btn btn-info btn-sm">Xem</a>
+                <a href="/admin/product/delete/{{this.id}}" class="btn btn-danger btn-sm">Xóa</a>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- /.container-fluid -->

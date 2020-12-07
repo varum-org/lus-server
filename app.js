@@ -11,9 +11,27 @@ const express = require("express"),
   Message = require("./models/message.js"),
   http = require("http").createServer(app),
   io = require("socket.io")(http),
-  YAML = require("yamljs");
+  YAML = require("yamljs"),
+  handlebars = require("express-handlebars"),
+  path = require("path"),
+  cors = require("cors");
 
-// configure body-parser
+// Config handlebars
+app.engine(
+  ".hbs",
+  handlebars({
+    extname: ".hbs",
+    defaultLayout: "main",
+    partialsDir: path.join(__dirname, "views/partials"),
+    layoutsDir: path.join(__dirname, "views/layouts"),
+  })
+);
+app.set("view engine", ".hbs");
+app.set("views", path.join(__dirname, "views"));
+
+// Config app
+app.use(cors());
+app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json({ limit: "50mb" })); // parse form data client
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 //Configure Mongodb
@@ -31,7 +49,6 @@ mongose
   })
   .catch((err) => console.log(err));
 
-const { async } = require("crypto-random-string");
 //Config Socket io
 const Room = require("./models/room");
 const User = require("./models/user");
@@ -97,24 +114,26 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // app entry point
 app.get("/", (req, res) =>
-  res.status(200).send({
-    message: "Welcome to our glorious app",
+  res.render("home/home.hbs", {
+    layout: "main.hbs",
+    // message: req.flash("message"),
   })
 );
 
 //Route
 app.use("/api/v1", require("./routes/api.js"));
+app.use("/admin", require("./routes/admin"));
 
 // Swagger
 const swaggerDocument = YAML.load("./docs/api-docs.yml");
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Setup a default catch-all route that sends back a welcome message in JSON format.
-app.get("*", (req, res) =>
-  res.status(200).send({
-    message: "Welcome to the beginning of nothingness.",
-  })
-);
+app.get("*", (req, res) => {
+  res.render("errors/error404.hbs", {
+    layout: "index.hbs",
+  });
+});
 
 http.listen(PORT, function () {
   console.log(`Running on http://${HOST}:${PORT}`);

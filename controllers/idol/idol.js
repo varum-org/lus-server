@@ -20,7 +20,7 @@ exports.list = async (req, res) => {
         const msg = "Idols not found";
         return handleFailed(res, msg, 500);
       }
-      break;
+
     case "random":
       if (idols) {
         let newIdolList = [];
@@ -38,7 +38,7 @@ exports.list = async (req, res) => {
         const msg = "Get list random idol failure";
         return handleFailed(res, msg, 500);
       }
-      break;
+
     case "rating":
       idols = await Idol.find().sort({ rating: -1 }).limit(10);
       if (idols) {

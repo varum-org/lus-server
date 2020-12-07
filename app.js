@@ -52,21 +52,83 @@ mongose
 //Config Socket io
 const Room = require("./models/room");
 const User = require("./models/user");
+
+let userIdOnlines = [];
 io.on("connection", (socket) => {
-  socket.on("join", async (id) => {
-    const user = await User.findOne({ _id: id });
-    const filter = { user_id: user._id };
-    Room.find(filter, (err, docs) => {
-      if (err) {
-        console.log(`error:` + err);
-      } else {
-        docs.forEach((element) => {
-          socket.join(element._id);
-          io.to(element._id).emit("online", user._id);
-          console.log(`A user connect to room: ${element._id}`);
-        });
+  socket.on("online", async (user_id) => {
+    socket.join(user_id);
+    socket.user_id = user_id;
+    if (userIdOnlines[user_id] == undefined) {
+      userIdOnlines.push(user_id);
+    }
+    console.log(userIdOnlines);
+    await joins(socket, user_id);
+    console.log(`${socket.email} connect: ${user_id}`);
+  });
+
+  socket.on("newRoom", (roomString) => {
+    const room = JSON.parse(roomString);
+    if (socket.rooms[room._id] == undefined) {
+      socket.join(room._id);
+      console.log(`${socket.email} connect new room: ${room._id}`);
+      const user_ids = [...room.user_id];
+      user_ids.shift(socket.user_id);
+      if (userIdOnlines.includes(user_ids[0])) {
+        socket.join(user_ids[0]);
+        console.log(`${socket.email} connect: ${user_ids[0]}`);
+        socket.broadcast.to(user_ids[0]).emit("joinRoom", JSON.stringify(room));
       }
-    });
+    }
+  });
+  socket.on("joinRoom", async (roomString) => {
+    const room = JSON.parse(roomString);
+    socket.join(room._id);
+    console.log(`${socket.email} connect new room: ${room._id}`);
+    const user_ids = [...room.user_id];
+    user_ids.shift(socket.user_id);
+    if (userIdOnlines.includes(user_ids[0])) {
+      const roomResponse = await handleResponseRoom(user_ids[0], room);
+      console.log(`${socket.email} send roomResponse to: ${user_ids[0]}`);
+      io.to(room._id).emit("updateRooms", JSON.stringify(roomResponse));
+    }
+  });
+
+  socket.on("joinChat", (roomId) => {
+    let size = 0;
+    socket.join(roomId + roomId);
+    Message.updateMany(
+      { room_id: roomId, is_read: 0 },
+      { $set: { is_read: 1 } },
+      { multi: true },
+      (err, writeResult) => {
+        if (err) {
+          console.log("Socket: isRead ", err);
+        } else {
+          console.log("Socket: isRead " + writeResult);
+        }
+      }
+    );
+    console.log(`${socket.email} join chat: ${roomId}`);
+    const adapters = io.sockets.adapter.rooms[roomId + roomId];
+    if (adapters !== undefined) size = adapters.length;
+    const newRoom = {
+      _id: roomId,
+      size: size,
+    };
+    io.to(roomId).emit("joinChat", newRoom);
+  });
+
+  socket.on("leaveChat", (roomId) => {
+    let size = 0;
+    socket.leave(roomId + roomId);
+    console.log(`${socket.email} leave chat: ${roomId}`);
+    const adapters = io.sockets.adapter.rooms[roomId + roomId];
+    if (adapters !== undefined) size = adapters.length;
+    const newRoom = {
+      _id: roomId,
+      size: size,
+    };
+    io.to(roomId).emit("leaveChat", newRoom);
   });
 
   socket.on("clientSendMessage", (data) => {
@@ -78,35 +140,68 @@ io.on("connection", (socket) => {
         room_id: message.room_id,
         user_id: message.user_id,
         content: message.content,
+        is_read: message.is_read,
       },
       (err, docs) => {
         if (err) {
           res.json(err);
         } else {
-          io.to(roomId).emit("serverSendMessage", JSON.stringify(docs));
+          console.log(`${socket.email} send message to: ${docs}`);
+          socket.broadcast
+            .to(roomId)
+            .emit("serverSendMessage", JSON.stringify(docs));
         }
       }
     );
   });
-  socket.on("offline", async (id) => {
-    const user = await User.findOne({ _id: id });
-    const filter = { user_id: user._id };
-    Room.find(filter, (err, docs) => {
-      if (err) {
-        console.log(`error:` + err);
-      } else {
-        docs.forEach((element) => {
-          socket.leave(element._id);
-          socket.broadcast.to(element._id).emit("offline", user._id);
-          console.log(`A user disconnect to room: ${element._id}`);
-        });
-      }
-    });
+
+  socket.on("typing", (room_id) => {
+    //Only roomNumber is needed here
+    console.log("typing triggered");
+    socket.broadcast.to(`${room_id}`).emit("typing");
   });
+
+  socket.on("stopTyping", (room_id) => {
+    //Only roomNumber is needed here
+    console.log("stopTyping triggered");
+    socket.broadcast.to(`${room_id}`).emit("stopTyping");
+  });
+
   socket.on("disconnect", () => {
-    console.log("One of sockets disconnected from our server.");
+    userIdOnlines.shift(socket.user_id);
   });
 });
+const handleResponseRoom = async (user_id, room) => {
+  let newRoom = { room: room };
+  const userReceive = await User.findOne(
+    { _id: user_id },
+    {
+      password: 0,
+      device_token: 0,
+      token: 0,
+      email_code: 0,
+      email_code_expires: 0,
+    }
+  );
+  newRoom.userReceive = userReceive;
+  return newRoom;
+};
+
+const joins = async (socket, user_id) => {
+  const user = await User.findOne({ _id: user_id });
+  socket.email = user.email;
+  const filter = { user_id: user._id };
+  Room.find(filter, (err, docs) => {
+    if (err) {
+      console.log(`error:` + err);
+    } else {
+      docs.forEach((element) => {
+        socket.join(element._id);
+        console.log(`${user.email} connect to room: ${element._id}`);
+      });
+    }
+  });
+};
 
 // configure body-parser
 app.use(bodyParser.json({ limit: "50mb" })); // parse form data client
@@ -135,6 +230,8 @@ app.get("*", (req, res) => {
   });
 });
 
-http.listen(PORT, function () {
+http.listen(PORT, async function () {
   console.log(`Running on http://${HOST}:${PORT}`);
+  // await Room.remove({});
+  // await Message.remove({});
 });

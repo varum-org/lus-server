@@ -2,14 +2,7 @@ module.exports = {
   handleSuccess(res, idol, msg) {
     return res.status(200).json({
       success: true,
-      data: {
-        nick_name: idol.nick_name,
-        address: idol.address,
-        relationship: idol.relationship,
-        description: idol.description,
-        image_gallery: idol.image_gallery,
-        services: idol.services,
-      },
+      data: idol,
       status_code: 200,
       messages: msg,
     });

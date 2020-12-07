@@ -4,6 +4,7 @@ const cloudinary = require("../../config/cloudinary");
 const fs = require("fs");
 const { handleFailed, handleSuccess, handleList } = require("./middleware");
 const Like = require("../../models/like");
+const { async } = require("crypto-random-string");
 
 exports.list = async (req, res) => {
   const { category } = req.query;
@@ -20,7 +21,6 @@ exports.list = async (req, res) => {
         const msg = "Idols not found";
         return handleFailed(res, msg, 500);
       }
-
     case "random":
       if (idols) {
         let newIdolList = [];
@@ -38,7 +38,6 @@ exports.list = async (req, res) => {
         const msg = "Get list random idol failure";
         return handleFailed(res, msg, 500);
       }
-
     case "rating":
       idols = await Idol.find().sort({ rating: -1 }).limit(10);
       if (idols) {
@@ -48,7 +47,6 @@ exports.list = async (req, res) => {
         const msg = "Get list rating idol failure";
         return handleFailed(res, msg, 500);
       }
-
     default:
       const msg = "No user provided.";
       return handleFailed(res, msg, 403);
@@ -94,6 +92,22 @@ exports.register = async (req, res) => {
   }
 };
 
+exports.detail = async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    const msg = "Idol id not null!";
+    return handleFailed(res, msg, 500);
+  } else {
+    const idol = await Idol.findById(id);
+    if (idol) {
+      return handleResponseDetail(req, res, idol, "Get Idol detail success!");
+    } else {
+      const msg = "Not found idol!";
+      return handleFailed(res, msg, 500);
+    }
+  }
+};
+
 exports.update = async (req, res) => {
   const {
     nick_name,
@@ -130,22 +144,27 @@ exports.update = async (req, res) => {
 
 exports.search = async (req, res) => {
   const { name, rating } = req.query;
-
-  Idol.find({ nick_name: new RegExp(name, "i") }, function (err, docs) {
-    let newIdols = [];
-    if (rating) {
-      for (const key of docs) {
-        if (key.rating >= rating) {
-          newIdols.push(key);
-        }
-      }
-      const msg = "Search Idol successfully!";
-      return handleList(res, newIdols, msg);
-    } else {
-      const msg = "Search Idol successfully!";
-      return handleList(res, docs, msg);
+  const docs = await Idol.find(
+    { nick_name: new RegExp(name, "i") },
+    {
+      services: 0,
+      rent_time_total: 0,
+      rating_total: 0,
+      rating: 0,
+      rent_total: 0,
+      rent_total_accepted: 0,
+      completion_rate: 0,
+      __v: 0,
     }
-  });
+  ).limit(10);
+  if (rating) {
+    const msg = "Search Idol successfully!";
+    const newIdols = await handleRating(docs, rating);
+    return handleList(res, newIdols, msg);
+  } else {
+    const msg = "Search Idol successfully!";
+    return handleList(res, docs, msg);
+  }
 };
 exports.upload_image = async (req, res) => {
   const uploader = async (path) => await cloudinary.uploader.upload(path);
@@ -154,7 +173,6 @@ exports.upload_image = async (req, res) => {
   for (const file of files) {
     const { path } = file;
     const newPath = await uploader(path);
-
     urls.push(newPath.secure_url);
     fs.unlinkSync(path);
   }
@@ -198,3 +216,44 @@ async function handleResponse(req, res, idols, msg) {
   }
   return handleList(res, newIdol, msg);
 }
+
+async function handleResponseDetail(req, res, data, msg) {
+  const token = req.header("authorization");
+  const user = await User.findOne({ token: token });
+  let idol = { idol: data };
+  const like = await Like.findOne({
+    user_id: data._id,
+    idol_id: data.user_id,
+  });
+  const profile = await User.findOne(
+    { _id: data.user_id },
+    {
+      password: 0,
+      device_token: 0,
+      token: 0,
+      email_code: 0,
+      email_code_expires: 0,
+    }
+  );
+  idol.user = profile;
+  idol.liked = null;
+  if (like) {
+    if (token && user) {
+      idol.liked = like.status;
+    }
+  } else {
+    if (token && user) {
+      idol.liked = false;
+    }
+  }
+  return handleSuccess(res, idol, msg);
+}
+const handleRating = (docs, rating) => {
+  let newIdols = [];
+  for (const key of docs) {
+    if (key.rating >= rating) {
+      newIdols.push(key);
+    }
+  }
+  return newIdols;
+};

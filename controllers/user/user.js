@@ -1,4 +1,5 @@
 const User = require("../../models/user");
+const Idol = require("../../models/idol");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto-random-string");
 const mail = require("../../config/send_email");
@@ -120,10 +121,9 @@ const createWallet = async (user_id) => {
 };
 
 exports.userInfomation = async (req, res) => {
-  const { id } = req.params;
-
+  const token = req.header("authorization");
   const user = await User.findOne(
-    { _id: id },
+    { token: token },
     {
       password: 0,
       device_token: 0,
@@ -134,9 +134,10 @@ exports.userInfomation = async (req, res) => {
   );
   if (user) {
     const mess = "Get information successfully";
-    handleGetUserSuccess(res, { user }, mess);
+    let idol = await Idol.findOne({ user_id: user._id });
+    handleGetUserSuccess(res, { user: user, idol: idol }, mess);
   } else {
     const mess = "User not found!";
-    handleFailed(res, mess, 403);
+    handleFailed(res, mess, 401);
   }
 };

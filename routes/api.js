@@ -75,6 +75,7 @@ router.post(
 );
 router.get(
   "/user/:id",
+  verify_token,
   [requireId],
   handleErrors(),
   controllerApiUser.userInfomation

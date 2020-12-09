@@ -51,14 +51,20 @@ exports.createRoom = async (req, res) => {
 exports.messageDetail = async (req, res) => {
   const { id } = req.params;
   const filter = { room_id: id };
-  await Message.find(filter, (err, messages) => {
-    if (!err) {
-      const msg = "Get messages success";
-      handleSuccess(res, messages, msg);
-    } else {
-      handleFailed(res, err, 500);
-    }
-  });
+  const token = req.header("authorization");
+  const user = await User.findOne({ token: token });
+  if (user) {
+    await Message.find(filter, (err, messages) => {
+      if (!err) {
+        const msg = "Get messages success";
+        handleSuccess(res, messages, msg);
+      } else {
+        handleFailed(res, err, 500);
+      }
+    });
+  } else {
+    handleFailed(res, "Not found user!", 401);
+  }
 };
 
 const handleResponseRoom = async (user, rooms) => {

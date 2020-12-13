@@ -50,16 +50,25 @@
               <td>{{this.name}}</td>
               <td>{{this.birthday}}</td>
               <td>{{this.address}}</td>
-              <td>{{this.rating}} - <i class="fa fa-star" style="color: rgb(238, 138, 8);" aria-hidden="true"></i></td>
+              <td>
+                {{#ifCond this.rating 0}}
+                Chưa đánh giá
+                {{else}}
+                {{#forLoop this.rating}}
+                <i class="fa fa-star" style="color: rgb(238, 138, 8);" aria-hidden="true"></i>
+                {{/forLoop}}
+                {{/ifCond}}
+                {{!-- {{this.rating}} - <i class="fa fa-star" style="color: rgb(238, 138, 8);" aria-hidden="true"></i> --}}
+              </td>
               <td>
                 {{#ifCond this.status 0}}
-                  <i class="fas fa-circle fa-xs" style="color: rgb(255, 0, 0);"></i>
+                <i class="fas fa-circle fa-xs" style="color: rgb(255, 0, 0);"></i>
                 {{else}}
-                  {{#ifCond this.status 1}}
-                  <i class="fas fa-circle fa-xs" style="color: rgb(5, 189, 14);"></i>
-                  {{else}}
-                  <i class="fas fa-circle fa-xs" style="color: rgb(0, 0, 0);"></i>
-                  {{/ifCond}}
+                {{#ifCond this.status 1}}
+                <i class="fas fa-circle fa-xs" style="color: rgb(5, 189, 14);"></i>
+                {{else}}
+                <i class="fas fa-circle fa-xs" style="color: rgb(0, 0, 0);"></i>
+                {{/ifCond}}
                 {{/ifCond}}
               </td>
               <td>

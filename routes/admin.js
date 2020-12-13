@@ -61,7 +61,7 @@ router.get("/dashboard", async (req, res) => {
     },
   ]);
 
-  const totalIdol = await Idol.find().count();
+  const totalIdol = await Idol.find().countDocuments();
 
   res.render("home/home.hbs", {
     title: "Dashboard",
@@ -103,6 +103,11 @@ router.get("/idol", async (req, res) => {
         }
         return options.inverse(this);
       },
+      forLoop: function (n, block) {
+        var accum = "";
+        for (var i = 0; i < n; ++i) accum += block.fn(i);
+        return accum;
+      },
     },
   });
 });
@@ -126,7 +131,7 @@ router.get("/idol/:id", async (req, res) => {
         title: "Idol Detail",
         idol: idol,
         services: data.services,
-        avatar: data.image_gallery[0],
+        images: data.image_gallery,
       });
     }
   });

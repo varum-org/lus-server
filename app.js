@@ -209,10 +209,7 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // app entry point
 app.get("/", (req, res) =>
-  res.render("home/home.hbs", {
-    layout: "main.hbs",
-    // message: req.flash("message"),
-  })
+  res.send("Welcome to Lus")
 );
 
 //Route

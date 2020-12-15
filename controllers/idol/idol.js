@@ -4,7 +4,6 @@ const cloudinary = require("../../config/cloudinary");
 const fs = require("fs");
 const { handleFailed, handleSuccess, handleList } = require("./middleware");
 const Like = require("../../models/like");
-const { async } = require("crypto-random-string");
 
 exports.list = async (req, res) => {
   const { category } = req.query;
@@ -173,7 +172,7 @@ exports.upload_image = async (req, res) => {
   for (const file of files) {
     const { path } = file;
     const newPath = await uploader(path);
-    urls.push(newPath.secure_url);
+    urls.push(`${newPath.public_id}.${format}`);
     fs.unlinkSync(path);
   }
 

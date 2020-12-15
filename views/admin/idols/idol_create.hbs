@@ -1,0 +1,126 @@
+<div class="container">
+    <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="card-body p-0">
+            <form class="user" action="/admin/idol" method="POST" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h1 class="h4 text-gray-900 mb-4">ĐĂNG KÝ IDOL</h1>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer02">Email <span style="color: red">*</span></label>
+                                    <input type="text" class="form-control" name="email" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer01">Họ và tên <span style="color: red">*</span></label>
+                                    <input type="text" class="form-control" name="user_name" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer02">Mật khẩu <span style="color: red">*</span></label>
+                                    <input type="password" class="form-control" name="password" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer01">Xác nhận mật khẩu <span
+                                            style="color: red">*</span></label>
+                                    <input type="password" class="form-control" name="password_confirmation" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="validationServer02">Nick name <span style="color: red">*</span></label>
+                                    <input type="text" class="form-control" name="nick_name" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer02">Số điện thoại <span
+                                            style="color: red">*</span></label>
+                                    <input type="text" class="form-control" name="phone" required>
+                                </div>
+                                <div class="form-group col-md-6 mb-3">
+                                    <label for="exampleFormControlSelect2">Giới tính</label>
+                                    <select class="form-control" name="gender">
+                                        <option>Nam</option>
+                                        <option>Nữ</option>
+                                        <option>Khác</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer02">Ngày sinh <span style="color: red">*</span></label>
+                                    <input type="date" class="form-control" name="birthday" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer04">Tình trạng <span style="color: red">*</span></label>
+                                    <input type="text" class="form-control" name="relationship" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="validationServer03">Địa chỉ <span style="color: red">*</span></label>
+                                    <input type="text" class="form-control" name="address" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="description">Mô tả <span style="color: red">*</span></label>
+                                    <textarea class="form-control" name="description" rows="3"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-5 d-none d-lg-block">
+                        <div class="col-md-6 mb-3 mt-5">
+                            <label for="validationServer02">Thêm ảnh <span style="color: red">*</span></label>
+                            <input type="file" name="image_gallery" multiple required id="gallery-photo-add">
+                        </div>
+                        <div class="row mt-3 mb-3 mr-2 gallery">
+                        </div>
+                        <input class="btn btn-primary btn-user btn-block" type="submit" value="Cập nhật">
+                        <a href="/admin/idols" class="btn btn-google btn-user btn-block">
+                            Trở lại
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+    $(function () {
+        $("#mdb-lightbox-ui").load("mdb-addons/mdb-lightbox-ui.html");
+    });
+    $(function () {
+        var imagesPreview = function (input, placeToInsertImagePreview) {
+            if (input.files) {
+                var filesAmount = input.files.length;
+
+                for (i = 0; i < filesAmount; i++) {
+                    var reader = new FileReader();
+                    reader.onload = function (event) {
+                        $($.parseHTML(`<div class="col-md-6 mb-3"> 
+                            <a href="${event.target.result}">
+                                <img alt="picture" src="${event.target.result}" 
+                                style="width:200px; height: 200px">
+                            </a>
+                            </div>`)).appendTo(placeToInsertImagePreview);
+                    }
+                    reader.readAsDataURL(input.files[i]);
+                }
+            }
+
+        };
+
+        $('#gallery-photo-add').on('change', function () {
+            imagesPreview(this, 'div.gallery');
+        });
+    });
+</script>

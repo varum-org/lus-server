@@ -1,0 +1,187 @@
+<div class="container-fluid">
+
+  <!-- Page Heading -->
+  <h1 class="h3 mb-2 text-gray-800">Quản lý Idol</h1>
+  <p class="mb-4">Danh sách tất cả Idol trong hệ thống</p>
+
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <form action="/admin/idol" method="GET">
+        <button type="submit" name="your_name" class="btn btn-info btn-sm">Thêm Idol</button>
+      </form>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Ảnh</th>
+              <th>Tên </th>
+              <th>Ngày sinh</th>
+              <th>Địa chỉ</th>
+              <th>Rating</th>
+              <th>Status</th>
+              <th>Chỉnh sửa</th>
+            </tr>
+          </thead>
+          <tfoot>
+            <tr>
+              <th>#</th>
+              <th>Ảnh</th>
+              <th style="min-width:100px">Tên </th>
+              <th style="min-width:150px">Ngày sinh</th>
+              <th style="min-width:120px">Địa chỉ</th>
+              <th>Rating</th>
+              <th>Status</th>
+              <th style="min-width:120px">Chỉnh sửa</th>
+            </tr>
+          </tfoot>
+          <tbody id="myTable">
+            {{#each idols}}
+            <tr>
+              <td>{{this.index}}</td>
+              <td>
+                <a href="/idol/{{$this._id}}">
+                  <img class="rounded" width="50" height="50"
+                    onerror="this.src='https://image.freepik.com/free-vector/cute-chibi-kawaii-characters_146706-51.jpg';"
+                    src="https://res.cloudinary.com/employeern/image/upload/w_50,h_50,c_fill/{{this.avatar}}" />
+                </a>
+              </td>
+              <td>{{this.name}}</td>
+              <td>{{this.birthday}}</td>
+              <td>{{this.address}}</td>
+              <td>
+                {{#ifCond this.rating 0}}
+                Chưa đánh giá
+                {{else}}
+                {{#forLoop this.rating}}
+                <i class="fa fa-star" style="color: rgb(238, 138, 8);" aria-hidden="true"></i>
+                {{/forLoop}}
+                {{/ifCond}}
+                {{!-- {{this.rating}} - <i class="fa fa-star" style="color: rgb(238, 138, 8);" aria-hidden="true"></i> --}}
+              </td>
+              <td>
+                {{#ifCond this.status 0}}
+                <i class="fas fa-circle fa-xs" style="color: rgb(255, 0, 0);"></i>
+                {{else}}
+                {{#ifCond this.status 1}}
+                <i class="fas fa-circle fa-xs" style="color: rgb(5, 189, 14);"></i>
+                {{else}}
+                <i class="fas fa-circle fa-xs" style="color: rgb(0, 0, 0);"></i>
+                {{/ifCond}}
+                {{/ifCond}}
+              </td>
+              <td>
+                <a href="/admin/idol/{{this.id}}" class="btn btn-info btn-sm">Xem</a>
+                <a data-id="{{this.id}}" class="delete btn btn-danger btn-sm text-white">Xóa</a>
+              </td>
+            </tr>
+            <div id="myModal" class="modal">
+              <div class="modal-content">
+                <h5 style="color: black">Xoá người dùng</h5>
+                <p>Bạn có chắc chắn muốn xoá người dùng này không?</p>
+                <div class="clearfix">
+                  <button type="button" class="cancelbtn">Huỷ</button>
+                  <button type="button" class="deletebtn">Xoá</button>
+                </div>
+              </div>
+            </div>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script>
+  var modal = document.getElementById("myModal");
+  var span = document.getElementsByClassName("cancelbtn")[0];
+
+  $(".delete").click(function () {
+    let id = $(this).attr("data-id");
+    modal.style.display = "block";
+    $(".deletebtn").click(function () {
+      var request = $.ajax({
+        url: "/admin/idol",
+        method: "DELETE",
+        data: { id: id },
+        dataType: "html",
+        success: function (data) {
+          if (data) {
+            window.location.replace(data);
+          }
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          alert('Có lỗi xảy ra, vui lòng thử lại sau!');
+        }
+      });
+    })
+  })
+  span.onclick = function () {
+    modal.style.display = "none";
+  }
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+</script>
+
+<style>
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+  }
+
+  .clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+
+  button:hover {
+    opacity: 1;
+  }
+
+  .cancelbtn,
+  .deletebtn {
+    float: left;
+    width: 50%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    opacity: 0.9;
+  }
+
+  .cancelbtn {
+    background-color: #ccc;
+    color: black;
+  }
+
+  .deletebtn {
+    background-color: #f44336;
+  }
+</style>

@@ -1,0 +1,112 @@
+<div class="container">
+    <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="card-body p-0">
+            <!-- Nested Row within Card Body -->
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="p-5">
+                        <div class="text-center">
+                            <h1 class="h4 text-gray-900 mb-4">THÔNG TIN CÁ NHÂN</h1>
+                        </div>
+                        <form class="user" action="/admin/idol/{{idol.id}}" method="POST">
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label>Email <span style="color: red">*</span></label>
+                                    <input type="text" class="form-control" name="email" placeholder="Email"
+                                        value="{{idol.email}}" required disabled>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Số điện thọại <span style="color: red">*</span></label>
+                                    <input type="text" class="form-control" name="phone" placeholder="Số điện thoại"
+                                        value="{{idol.phone}}" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label>Họ và tên <span style="color: red">*</span></label>
+                                    <input type="text" class="form-control" name="user_name" placeholder="Họ và tên"
+                                        value="{{idol.user_name}}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Nick name <span style="color: red">*</span></label>
+                                    <input type="text" class="form-control" name="nick_name" placeholder="Nick name"
+                                        value="{{idol.nick_name}}" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6 mb-3">
+                                    <label>Giới tính <span style="color: red">*</span></label>
+                                    <select class="form-control" name="gender">
+                                        <option selected>{{idol.gender}}</option>
+                                        <option>Nam</option>
+                                        <option>Nữ</option>
+                                        <option>Khác</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Ngày sinh <span style="color: red">*</span></label>
+                                    <input id="datepicker" class="form-control" name="birthday"
+                                        value="{{idol.birthday}}" required>
+                                </div>
+                                <div class="form-group col-md-12 mb-3">
+                                    <label>Rating <span style="color: red">*</span></label>
+                                    <select class="form-control" name="rating">
+                                        <option selected>{{idol.rating}}</option>
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label>Địa chỉ <span style="color: red">*</span></label>
+                                    <input type="text" class="form-control" name="address" value="{{idol.address}}"
+                                        required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Tình trạng <span style="color: red">*</span></label>
+                                    <input type="text" class="form-control" name="relationship"
+                                        value="{{idol.relationship}}" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12 mb-3">
+                                    <label>Mô tả</label>
+                                    <textarea class="form-control" name="description"
+                                        rows="3">{{idol.description}}</textarea>
+                                </div>
+                            </div>
+                            <input class="btn btn-primary btn-user btn-block" type="submit" value="Cập nhật">
+                            <a href="/admin/idols" class="btn btn-google btn-user btn-block">
+                                Trở lại
+                            </a>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-none d-lg-block">
+                    <div class="row mt-4 mb-3 mr-2">
+                        <div id="mdb-lightbox-ui"></div>
+                        {{#each images}}
+                        <div class="col-md-6 mb-3">
+                            <a href="https://res.cloudinary.com/employeern/image/upload/{{this}}">
+                                <img alt="picture"
+                                    src="https://res.cloudinary.com/employeern/image/upload/w_200,h_200,c_fill/{{this}}"
+                                    class="img-fluid">
+                            </a>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#datepicker').datepicker({
+        uiLibrary: 'bootstrap4'
+    });
+</script>

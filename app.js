@@ -23,7 +23,7 @@ app.engine(
     extname: ".hbs",
     defaultLayout: "main",
     partialsDir: path.join(__dirname, "views/partials"),
-    layoutsDir: path.join(__dirname, "views/layouts"),
+    layoutsDir: path.join(__dirname, "views"),
   })
 );
 app.set("view engine", ".hbs");
@@ -209,10 +209,7 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // app entry point
 app.get("/", (req, res) =>
-  res.render("home/home.hbs", {
-    layout: "main.hbs",
-    // message: req.flash("message"),
-  })
+  res.send("Welcome to Lus")
 );
 
 //Route
@@ -225,8 +222,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Setup a default catch-all route that sends back a welcome message in JSON format.
 app.get("*", (req, res) => {
-  res.render("errors/error404.hbs", {
-    layout: "index.hbs",
+  res.render("admin/errors/error404.hbs", {
+    layout: "admin/layouts/index.hbs",
   });
 });
 

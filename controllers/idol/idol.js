@@ -68,19 +68,18 @@ exports.register = async (req, res) => {
   if (user && user.role_id != 2) {
     const exist_location = await Location.findOne({ user_id: user._id });
     if (exist_location) {
-      const location = await Location.findOneAndUpdate({
-        name: location.name,
-        latitude: location.latitude,
-        longtitude: location.longtitude,
-      });
+      (exist_location.name = location.name),
+        (exist_location.latitude = location.latitude),
+        (exist_location.longtitude = location.longtitude),
+        exist_location.save();
     } else {
-      const location = new Location({
+      const newLocation = new Location({
         user_id: user._id,
         name: location.name,
         latitude: location.latitude,
         longtitude: location.longtitude,
       });
-      location.save();
+      newLocation.save();
     }
 
     const idol = new Idol({
@@ -105,7 +104,7 @@ exports.register = async (req, res) => {
     });
   } else {
     const msg = "User not found or User has been an Idol!";
-    return handleFailed(res, msg, 500);
+    return handleFailed(res, msg, 401);
   }
 };
 

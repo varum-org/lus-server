@@ -14,8 +14,13 @@ const express = require("express"),
   YAML = require("yamljs"),
   handlebars = require("express-handlebars"),
   path = require("path"),
-  cors = require("cors");
+  cors = require("cors"),
+  flash = require("connect-flash"),
+  passport = require("passport"),
+  expressSession = require("express-session"),
+  initPassport = require("./config/passport/initialPassport");
 
+const adminRoute = require("./routes/admin");
 // Config handlebars
 app.engine(
   ".hbs",
@@ -31,6 +36,7 @@ app.set("views", path.join(__dirname, "views"));
 
 // Config app
 app.use(cors());
+app.use(flash());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json({ limit: "50mb" })); // parse form data client
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
@@ -49,6 +55,17 @@ mongose
   })
   .catch((err) => console.log(err));
 
+//Configure passport
+app.use(
+  expressSession({
+    secret: "VTNPD",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+initPassport(passport);
 //Config Socket io
 const Room = require("./models/room");
 const User = require("./models/user");
@@ -208,13 +225,11 @@ app.use(bodyParser.json({ limit: "50mb" })); // parse form data client
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // app entry point
-app.get("/", (req, res) =>
-  res.send("Welcome to Lus")
-);
+app.get("/", (req, res) => res.send("Welcome to Lus"));
 
 //Route
 app.use("/api/v1", require("./routes/api.js"));
-app.use("/admin", require("./routes/admin"));
+app.use("/admin", adminRoute(passport));
 
 // Swagger
 const swaggerDocument = YAML.load("./docs/api-docs.yml");

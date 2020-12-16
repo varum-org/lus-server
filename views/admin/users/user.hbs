@@ -66,23 +66,23 @@
                                 <a data-id="{{this._id}}" class="delete btn btn-danger btn-sm text-white">Xóa</a>
                             </td>
                         </tr>
-                        <div id="myModal" class="modal">
-                            <div class="modal-content">
-                                <h5 style="color: black">Xoá người dùng</h5>
-                                <p>Bạn có chắc chắn muốn xoá người dùng này không?</p>
-                                <div class="clearfix">
-                                    <button type="button" class="cancelbtn">Huỷ</button>
-                                    <button type="button" class="deletebtn">Xoá</button>
-                                </div>
-                            </div>
-                        </div>
                         {{/each}}
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+</div>
 
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <h5 style="color: black">Xoá người dùng</h5>
+        <p>Bạn có chắc chắn muốn xoá người dùng này không?</p>
+        <div class="clearfix">
+            <button type="button" class="cancelbtn">Huỷ</button>
+            <button data-id-modal="" type="button" id="data-change" class="deletebtn">Xóa</button>
+        </div>
+    </div>
 </div>
 
 <script src="/vendor/jquery/jquery.min.js"></script>
@@ -93,12 +93,14 @@
 
     $(".delete").click(function () {
         let id = $(this).attr("data-id");
+        $('#data-change').attr('data-id-modal', id);
         modal.style.display = "block";
         $(".deletebtn").click(function () {
+            let id_change = $('#data-change').attr('data-id-modal');
             var request = $.ajax({
                 url: "/admin/user",
                 method: "DELETE",
-                data: { id: id },
+                data: { id: id_change },
                 dataType: "html",
                 success: function (data) {
                     if (data) {
@@ -111,7 +113,6 @@
             });
         })
     })
-
     span.onclick = function () {
         modal.style.display = "none";
     }
@@ -123,6 +124,10 @@
 </script>
 
 <style>
+    .table>tbody>tr>td {
+        vertical-align: middle;
+    }
+
     .modal {
         display: none;
         position: fixed;

@@ -16,7 +16,7 @@
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th>#</th>
+              <th>STT</th>
               <th>Ảnh</th>
               <th>Tên </th>
               <th>Ngày sinh</th>
@@ -28,7 +28,7 @@
           </thead>
           <tfoot>
             <tr>
-              <th>#</th>
+              <th>STT</th>
               <th>Ảnh</th>
               <th style="min-width:100px">Tên </th>
               <th style="min-width:150px">Ngày sinh</th>
@@ -78,20 +78,20 @@
                 <a data-id="{{this.id}}" class="delete btn btn-danger btn-sm text-white">Xóa</a>
               </td>
             </tr>
-            <div id="myModal" class="modal">
-              <div class="modal-content">
-                <h5 style="color: black">Xoá người dùng</h5>
-                <p>Bạn có chắc chắn muốn xoá người dùng này không?</p>
-                <div class="clearfix">
-                  <button type="button" class="cancelbtn">Huỷ</button>
-                  <button type="button" class="deletebtn">Xoá</button>
-                </div>
-              </div>
-            </div>
             {{/each}}
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+</div>
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <h5 style="color: black">Xoá người dùng</h5>
+    <p>Bạn có chắc chắn muốn xoá người dùng này không?</p>
+    <div class="clearfix">
+      <button type="button" class="cancelbtn">Huỷ</button>
+      <button data-id-modal="" type="button" id="data-change" class="deletebtn">Xóa</button>
     </div>
   </div>
 </div>
@@ -103,12 +103,14 @@
 
   $(".delete").click(function () {
     let id = $(this).attr("data-id");
+    $('#data-change').attr('data-id-modal', id);
     modal.style.display = "block";
     $(".deletebtn").click(function () {
+      let id_change = $('#data-change').attr('data-id-modal');
       var request = $.ajax({
         url: "/admin/idol",
         method: "DELETE",
-        data: { id: id },
+        data: { id: id_change },
         dataType: "html",
         success: function (data) {
           if (data) {
@@ -132,6 +134,10 @@
 </script>
 
 <style>
+  .table>tbody>tr>td {
+    vertical-align: middle;
+  }
+
   .modal {
     display: none;
     position: fixed;

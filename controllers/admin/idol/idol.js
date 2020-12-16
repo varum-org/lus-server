@@ -36,6 +36,7 @@ exports.list = async (req, res) => {
   res.render("admin/idols/idols.hbs", {
     layout: "admin/layouts/main.hbs",
     title: "Idol",
+    active: { Idol: true },
     idols: results,
     helpers: {
       ifCond: function (v1, v2, options) {
@@ -50,6 +51,14 @@ exports.list = async (req, res) => {
         return accum;
       },
     },
+  });
+};
+
+exports.getCreate = async (req, res) => {
+  return res.render("admin/idols/idol_create.hbs", {
+    layout: "admin/layouts/main.hbs",
+    title: "Đăng ký Idol",
+    active: { Idol: true },
   });
 };
 
@@ -73,7 +82,12 @@ exports.create = async (req, res) => {
 
   const user_exist = await User.findOne({ email: email });
   if (password != password_confirmation) {
-    return res.send("Password not match");
+    return res.render("admin/idols/idol_create.hbs", {
+      layout: "admin/layouts/main.hbs",
+      title: "Đăng ký Idol",
+      active: { Idol: true },
+      message: req.flash("message", "Mật khẩu không khớp")
+    });
   }
   if (user_exist) {
     return res.send("User already exist");
@@ -167,6 +181,7 @@ exports.detail = async (req, res) => {
       res.render("admin/idols/idol_update.hbs", {
         layout: "admin/layouts/main.hbs",
         title: "Idol Detail",
+        active: { Idol: true },
         idol: idol,
         services: data.services,
         images: data.image_gallery,

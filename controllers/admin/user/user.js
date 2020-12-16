@@ -8,11 +8,25 @@ const options = {
   day: "numeric",
 };
 
+exports.get_signin = async (req, res) => {
+  if (req.isAuthenticated()) return res.redirect("/admin/dashboard");
+  res.render("admin/users/sign_in.hbs", {
+    layout: "admin/layouts/index.hbs",
+    message: req.flash("message"),
+  });
+};
+
+exports.logout = async (req, res) => {
+  req.logout();
+  res.redirect("/admin");
+};
+
 exports.list = async (req, res) => {
   const users = await User.find().sort({ created_date: -1 });
   res.render("admin/users/user", {
     layout: "admin/layouts/main.hbs",
     title: "User",
+    active: { User: true },
     users: users.map((dat, index) => ({
       ...dat.toJSON(),
       created_date: dat.created_date.toLocaleDateString("vi-VN", options),
@@ -46,6 +60,7 @@ exports.detail = async (req, res) => {
   res.render("admin/users/user_update.hbs", {
     layout: "admin/layouts/main.hbs",
     title: "User Detail",
+    active: { User: true },
     user: userData,
   });
 };
@@ -79,12 +94,11 @@ exports.delete = async (req, res) => {
   const id = req.body.id;
   await User.findOneAndDelete({ _id: id }, async (err) => {
     if (!err) {
-        await Idol.findOneAndDelete({user_id: id}, (err) => {
-            if(!err){
-                return res.send(url);
-            }
-        })
-      
+      await Idol.findOneAndDelete({ user_id: id }, (err) => {
+        if (!err) {
+          return res.send(url);
+        }
+      });
     }
   });
 };

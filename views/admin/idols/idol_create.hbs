@@ -8,6 +8,11 @@
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">ĐĂNG KÝ IDOL</h1>
                             </div>
+                            {{#if message}}
+                            <div class="alert alert-danger" role="alert">
+                                <span>{{message}}</span>
+                            </div>
+                            {{/if}}
                             <div class="form-row">
                                 <div class="col-md-6 mb-3">
                                     <label for="validationServer02">Email <span style="color: red">*</span></label>
@@ -82,10 +87,12 @@
                         </div>
                         <div class="row mt-3 mb-3 mr-2 gallery">
                         </div>
-                        <input class="btn btn-primary btn-user btn-block" type="submit" value="Cập nhật">
-                        <a href="/admin/idols" class="btn btn-google btn-user btn-block">
-                            Trở lại
-                        </a>
+                        <div class="col-md-12 mb-3 mt-3">
+                            <input class="btn btn-primary btn-user btn-block" type="submit" value="Đăng ký">
+                            <a href="/admin/idols" class="btn btn-google btn-user btn-block">
+                                Trở lại
+                            </a>
+                        </div>
                     </div>
                 </div>
             </form>

@@ -4,6 +4,7 @@ const cloudinary = require("../../config/cloudinary");
 const fs = require("fs");
 const { handleFailed, handleSuccess, handleList } = require("./middleware");
 const Like = require("../../models/like");
+const Location = require("../../models/location");
 
 exports.list = async (req, res) => {
   const { category } = req.query;
@@ -55,7 +56,7 @@ exports.list = async (req, res) => {
 exports.register = async (req, res) => {
   const {
     nick_name,
-    address,
+    location,
     relationship,
     description,
     image_gallery,
@@ -65,10 +66,27 @@ exports.register = async (req, res) => {
   const user = await User.findOne({ token: token });
 
   if (user && user.role_id != 2) {
+    const exist_location = await Location.findOne({ user_id: user._id });
+    if (exist_location) {
+      const location = await Location.findOneAndUpdate({
+        name: location.name,
+        latitude: location.latitude,
+        longtitude: location.longtitude,
+      });
+    } else {
+      const location = new Location({
+        user_id: user._id,
+        name: location.name,
+        latitude: location.latitude,
+        longtitude: location.longtitude,
+      });
+      location.save();
+    }
+
     const idol = new Idol({
       user_id: user._id,
       nick_name: nick_name,
-      address: address,
+      address: location.name,
       relationship: relationship,
       description: description,
       image_gallery: image_gallery,

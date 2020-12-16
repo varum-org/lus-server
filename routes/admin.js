@@ -5,6 +5,8 @@ const adminControllerIdol = require("../controllers/admin/idol/idol");
 const adminControllerDashboard = require("../controllers/admin/dashboard/dashboard");
 const adminControllerUser = require("../controllers/admin/user/user");
 const adminControllerService = require("../controllers/admin/service/service");
+const adminControllerBanner = require("../controllers/admin/banner/banner");
+const adminControllerOrder = require("../controllers/admin/order/order");
 
 const multer = require("multer");
 const upload = multer({ dest: "public/image/" });
@@ -26,44 +28,49 @@ const adminRoute = (passport) => {
   router.get("/logout", isAuthenticated, adminControllerUser.logout);
 
   router.get("/dashboard", isAuthenticated, adminControllerDashboard.dashboard);
-  router.get("/idols", adminControllerIdol.list);
-  router.get("/idol", adminControllerIdol.getCreate);
+  router.get("/idols", isAuthenticated, adminControllerIdol.list);
+  router.get("/idol", isAuthenticated, adminControllerIdol.getCreate);
   router.post(
     "/idol",
     upload.array("image_gallery", 10),
+    isAuthenticated,
     adminControllerIdol.create
   );
-  router.get("/idol/:id", adminControllerIdol.detail);
-  router.post("/idol/:id", adminControllerIdol.update);
-  router.delete("/idol", adminControllerIdol.delete);
+  router.get("/idol/:id", isAuthenticated, adminControllerIdol.detail);
+  router.post("/idol/:id", isAuthenticated, adminControllerIdol.update);
+  router.delete("/idol", isAuthenticated, adminControllerIdol.delete);
 
-  router.get("/users", adminControllerUser.list);
-  router.get("/user/:id", adminControllerUser.detail);
-  router.post("/user/:id", adminControllerUser.update);
-  router.delete("/user", adminControllerUser.delete);
+  router.get("/users", isAuthenticated, adminControllerUser.list);
+  router.get("/user/:id", isAuthenticated, adminControllerUser.detail);
+  router.post("/user/:id", isAuthenticated, adminControllerUser.update);
+  router.delete("/user", isAuthenticated, adminControllerUser.delete);
 
-  router.get("/services", adminControllerService.list);
-  router.get("/service/:id", adminControllerService.detail);
+  router.get("/services", isAuthenticated, adminControllerService.list);
+  router.get("/service/:id", isAuthenticated, adminControllerService.detail);
   router.post(
     "/service",
     upload.single("image_gallery"),
+    isAuthenticated,
     adminControllerService.create
   );
   router.post(
     "/service/:id",
     upload.single("image_gallery"),
+    isAuthenticated,
     adminControllerService.update
   );
-  router.delete("/service", adminControllerService.delete);
-  router.get("/service", adminControllerService.get_create);
+  router.delete("/service", isAuthenticated, adminControllerService.delete);
+  router.get("/service", isAuthenticated, adminControllerService.get_create);
+
+  router.get("/banners", isAuthenticated, adminControllerBanner.list);
+
+  router.get("/orders", isAuthenticated, adminControllerOrder.list);
 
   return router;
 };
 
 const isAuthenticated = (req, res, next) => {
-  //Nếu đã đăng nhập thì tiếp tục điều hướng
   if (req.isAuthenticated()) return next();
-  //Nếu chưa đăng nhập thì chuyển về trang đăng nhập
   res.redirect("/admin/signin");
 };
 

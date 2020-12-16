@@ -172,7 +172,7 @@ exports.upload_image = async (req, res) => {
   for (const file of files) {
     const { path } = file;
     const newPath = await uploader(path);
-    urls.push(`${newPath.public_id}.${format}`);
+    urls.push(`${newPath.public_id}.${newPath.format}`);
     fs.unlinkSync(path);
   }
 

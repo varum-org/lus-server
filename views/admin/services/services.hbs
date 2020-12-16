@@ -7,7 +7,7 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <form action="/admin/idol" method="GET">
+            <form action="/admin/service" method="GET">
                 <button type="submit" name="your_name" class="btn btn-info btn-sm">Thêm Dịch vụ</button>
             </form>
         </div>
@@ -18,7 +18,7 @@
                         <tr>
                             <th>#</th>
                             <th>Ảnh</th>
-                            <th style="min-width:110px">Mã dịch vụ</th>
+                            <th style="min-width:110px; ">Mã dịch vụ</th>
                             <th style="min-width:200px">Tên dịch vụ</th>
                             <th>Mô tả</th>
                             <th style="min-width:120px">Chỉnh sửa</th>
@@ -45,28 +45,29 @@
                                         src="https://res.cloudinary.com/employeern/image/upload/w_50,h_50,c_fill/{{this.service_image_path}}" />
                                 </a>
                             </td>
-                            <td>{{this.service_code}}</td>
+                            <td style="text-align: center;">{{this.service_code}}</td>
                             <td>{{this.service_name}}</td>
                             <td>{{this.service_description}}</td>
                             <td>
-                                <a href="/admin/idol/{{this.id}}" class="btn btn-info btn-sm">Xem</a>
-                                <a data-id="{{this.id}}" class="delete btn btn-danger btn-sm text-white">Xóa</a>
+                                <a href="/admin/service/{{this._id}}" class="btn btn-info btn-sm">Xem</a>
+                                <a data-id="{{this._id}}" class="delete btn btn-danger btn-sm text-white">Xóa</a>
                             </td>
                         </tr>
-                        <div id="myModal" class="modal">
-                            <div class="modal-content">
-                                <h5 style="color: black">Xoá người dùng</h5>
-                                <p>Bạn có chắc chắn muốn xoá người dùng này không?</p>
-                                <div class="clearfix">
-                                    <button type="button" class="cancelbtn">Huỷ</button>
-                                    <button type="button" class="deletebtn">Xoá</button>
-                                </div>
-                            </div>
-                        </div>
                         {{/each}}
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <h5 style="color: black">Xoá người dùng</h5>
+        <p>Bạn có chắc chắn muốn xoá người dùng này không?</p>
+        <div class="clearfix">
+            <button type="button" class="cancelbtn">Huỷ</button>
+            <button data-id-modal="" type="button" id="data-change" class="deletebtn">Xóa</button>
         </div>
     </div>
 </div>
@@ -78,12 +79,14 @@
 
     $(".delete").click(function () {
         let id = $(this).attr("data-id");
+        $('#data-change').attr('data-id-modal', id);
         modal.style.display = "block";
         $(".deletebtn").click(function () {
+            let id_change = $('#data-change').attr('data-id-modal');
             var request = $.ajax({
                 url: "/admin/service",
                 method: "DELETE",
-                data: { id: id },
+                data: { id: id_change },
                 dataType: "html",
                 success: function (data) {
                     if (data) {
@@ -107,6 +110,10 @@
 </script>
 
 <style>
+    .table>tbody>tr>td {
+        vertical-align: middle;
+    }
+
     .modal {
         display: none;
         position: fixed;

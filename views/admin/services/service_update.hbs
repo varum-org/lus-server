@@ -1,0 +1,89 @@
+<div class="container">
+    <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="card-body p-0">
+            <form class="user" action="/admin/service/{{service.id}}" method="POST" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h1 class="h4 text-gray-900 mb-4">CHI TIẾT DỊCH VỤ</h1>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12 mb-3">
+                                    <label>Mã dịch vụ <span style="color: red">*</span></label>
+                                    <input type="number" class="form-control" name="service_code"
+                                        placeholder="Mã dịch vụ" value="{{service.service_code}}" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12 mb-3">
+                                    <label>Tên dịch vụ <span style="color: red">*</span></label>
+                                    <input type="text" class="form-control" name="service_name"
+                                        placeholder="Tên dịch vụ" value="{{service.service_name}}" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12 mb-3">
+                                    <label>Mô tả <span style="color: red">*</span></label>
+                                    <textarea class="form-control" name="service_description"
+                                        rows="3">{{service.service_description}}</textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-5 d-none d-lg-block">
+                        <div class="col-md-6 mb-3 mt-5">
+                            <label for="validationServer02">Icon dịch vụ <span style="color: red">*</span></label>
+                            <input type="file" name="image_gallery" id="gallery-photo-add">
+                        </div>
+                        <div class="row mt-3 mb-3 mr-2 ml-3 gallery">
+                            <a href="https://res.cloudinary.com/employeern/image/upload/{{service.service_image_path}}">
+                                <img alt="picture"
+                                    onerror="this.src='https://image.freepik.com/free-vector/cute-chibi-kawaii-characters_146706-51.jpg';"
+                                    src="https://res.cloudinary.com/employeern/image/upload/w_150,h_150,c_fill/{{service.service_image_path}}"
+                                    class="img-fluid">
+                            </a>
+                        </div>
+                        <div class="col-md-12 mb-3 mt-3">
+                            <input class="btn btn-primary btn-user btn-block" type="submit" value="Lưu">
+                            <a href="/admin/services" class="btn btn-google btn-user btn-block">
+                                Trở lại
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+    $(function () {
+        var imagesPreview = function (input, placeToInsertImagePreview) {
+            if (input.files) {
+                var filesAmount = input.files.length;
+
+                for (i = 0; i < filesAmount; i++) {
+                    var reader = new FileReader();
+                    reader.onload = function (event) {
+                        $($.parseHTML(`<div class="col-md-6 mb-3 gallery"> 
+                            <a href="${event.target.result}">
+                                <img alt="picture" src="${event.target.result}" 
+                                style="width:200px; height: 200px">
+                            </a>
+                            </div>`)).replaceAll(placeToInsertImagePreview);
+                    }
+                    reader.readAsDataURL(input.files[i]);
+                }
+            }
+
+        };
+
+        $('#gallery-photo-add').on('change', function () {
+            imagesPreview(this, 'div.gallery');
+        });
+    });
+</script>

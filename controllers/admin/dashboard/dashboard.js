@@ -52,6 +52,7 @@ exports.dashboard = async (req, res) => {
   ]);
 
   const totalIdol = await Idol.find().countDocuments();
+  const totalOrder = await Order.find().countDocuments();
 
   res.render("admin/home/home.hbs", {
     layout: "admin/layouts/main.hbs",
@@ -60,6 +61,7 @@ exports.dashboard = async (req, res) => {
     totalAmount: total.length > 0 ? total[0].amount : 0,
     monthAmount: month.length > 0 ? month[0].amount : 0,
     totalIdol: totalIdol,
+    totalOrder: totalOrder
     //   yourname: req.user.fullname,
     //   avatar: req.user.avatar,
   });

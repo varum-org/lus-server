@@ -1,4 +1,4 @@
-const signin = require("./sign_in");
+var signin = require("./sign_in");
 const User = require("../../models/user");
 
 const initPassport = (passport) => {

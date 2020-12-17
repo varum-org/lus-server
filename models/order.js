@@ -6,7 +6,7 @@ const OrderSchema = new mongose.Schema({
     required: true,
   },
   user_phone: {
-    type: Number,
+    type: String,
     required: true,
   },
   user_name: {
@@ -14,6 +14,30 @@ const OrderSchema = new mongose.Schema({
     required: true,
   },
   user_address: {
+    type: String,
+    default: "",
+  },
+  user_image: {
+    type: String,
+    default: "",
+  },
+  idol_email: {
+    type: String,
+    required: true,
+  },
+  idol_user_name: {
+    type: String,
+    required: true,
+  },
+  idol_phone: {
+    type: String,
+    required: true,
+  },
+  idol_address: {
+    type: String,
+    default: "",
+  },
+  idol_image: {
     type: String,
     default: "",
   },
@@ -27,12 +51,12 @@ const OrderSchema = new mongose.Schema({
   },
   payment_method: {
     type: String,
-    required: true,
+    default: "Xu",
   },
   status: {
     type: Number,
     required: true,
-    default: 0,
+    default: 1,
   },
   start_date: {
     type: Date,

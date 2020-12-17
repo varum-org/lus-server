@@ -33,7 +33,7 @@ exports.list = async (req, res) => {
   res.render("admin/orders/order_success", {
     layout: "admin/layouts/main.hbs",
     title: "Đơn hàng thành công",
-    active: { Order_All: true },
+    active: { Order_success: true },
     orders: orders.map((dat, index) => ({
       ...dat.toJSON(),
       created_date: dat.created_date.toLocaleDateString("vi-VN", options),
@@ -67,7 +67,7 @@ exports.detail = async (req, res) => {
   res.render("admin/orders/order_detail", {
     layout: "admin/layouts/main.hbs",
     title: "Chi tiết đơn hàng",
-    active: { Order_All: true },
+    active: { Order_success: true },
     order: order.toJSON(),
     order_detail: order_detail.map((dat, index) => ({
       ...dat.toJSON(),

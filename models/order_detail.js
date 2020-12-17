@@ -5,21 +5,6 @@ const OrderDetailSchema = new mongose.Schema({
     type: String,
     required: true,
   },
-  idol_email: {
-    type: String,
-    required: true,
-  },
-  idol_user_name: {
-    type: String,
-    required: true,
-  },
-  idol_phone: {
-    type: String,
-    required: true,
-  },
-  idol_address: {
-    type: String,
-  },
   service_code: {
     type: Number,
     required: true,

@@ -4,6 +4,7 @@ const Wallet = require("../../models/wallet");
 const User = require("../../models/user");
 const { handleSuccess, handleFailed, handleList } = require("./middleware");
 const mongoose = require("mongoose");
+const Idol = require("../../models/idol");
 const ObjectId = mongoose.Types.ObjectId;
 
 exports.list = async (req, res) => {
@@ -53,14 +54,26 @@ exports.list = async (req, res) => {
   }
 };
 
-exports.list_for_idol = async (req, res) => {
+exports.list_order_idol = async (req, res) => {
+  const { status } = req.query;
   const token = req.header("authorization");
   const user = await User.findOne({ token: token });
+  if (user) {
+    const list_orders = await Order.find({
+      user_email: user.email,
+      status: status,
+    }).limit(10);
 
-  const list_orders = await Order.find({ idol_id: user._id });
-  if (list_orders) {
-    const msg = "Get list rent me success";
-    return handleList(res, list_orders, msg);
+    if (list_orders) {
+      const msg = "Get list rent me success";
+      return handleList(res, list_orders, msg);
+    } else {
+      const msg = "Có lỗi xảy ra. Vui lòng thử lại sau";
+      return handleFailed(res, msg, 500);
+    }
+  } else {
+    const msg = "Có lỗi xảy ra. Vui lòng thử lại sau";
+    return handleFailed(res, msg, 401);
   }
 };
 
@@ -68,6 +81,8 @@ exports.add = async (req, res) => {
   const { user_id, start_date, note, services } = req.body;
   const token = req.header("authorization");
   const user = await User.findOne({ token: token });
+  const idol = await User.findOne({ _id: user_id });
+  const idol_ = await Idol.findOne({ user_id: idol._id });
   const wallet = await Wallet.findOne({ user_id: user._id });
 
   if (wallet.balance >= getTotalOrder(services)) {
@@ -78,6 +93,12 @@ exports.add = async (req, res) => {
       user_phone: user.phone,
       user_name: user.user_name,
       user_address: user.address ? user.address : "",
+      user_image: user.image_path,
+      idol_email: idol.email,
+      idol_user_name: idol.user_name,
+      idol_phone: idol.phone,
+      idol_address: idol.address,
+      idol_image: idol_.image_gallery[0],
       payment_method: "Xu",
       amount: getTotalOrder(services),
       status: 1,
@@ -86,14 +107,10 @@ exports.add = async (req, res) => {
     });
     order.save(async (err, orderResult) => {
       if (!err) {
-        const result = await flattenServices(
-          orderResult._id,
-          user_id,
-          services
-        );
+        const result = await flattenServices(orderResult._id, services);
         OrderDetail.insertMany(result, (err, docs) => {
           if (!err) {
-            const msg = "Order success";
+            const msg = "Thuê thành công";
             return handleSuccess(res, orderResult, msg);
           } else {
             return handleFailed(res, err, 500);
@@ -107,42 +124,53 @@ exports.add = async (req, res) => {
   }
 };
 
-
 exports.update = async (req, res) => {
   const { order_id, status } = req.body;
   const order = await Order.findOne({ _id: order_id });
-  const wallet = await Wallet.findOne({ user_id: order.user_id });
 
-  if (order && status == 1) {
-    if (wallet.balance >= order.total) {
-      order.status = status;
-      order.save(async (err, result) => {
-        if (!err) {
-          wallet.balance = wallet.balance - total;
-          wallet.save();
-          const msg = "Update order success";
-          return handleSuccess(res, result, msg);
-        } else {
-          const msg = "Update order failure";
-          return handleFailed(res, msg, 500);
-        }
-      });
-    } else {
-      await Order.findOneAndDelete({ _id: order_id }, (err) => {
-        if (!err) {
-          const msg = "Customer not enough Xu. Order has been delete";
-          return handleFailed(res, msg, 500);
-        }
-      });
-    }
-  } else {
+  const user = await User.findOne({ email: order.user_email });
+  const idol = await User.findOne({ email: order.idol_email });
+
+  const user_wallet = await Wallet.findOne({ user_id: user._id });
+  const idol_wallet = await Wallet.findOne({ user_id: idol._id });
+
+  if (order && order.status == 4) {
+    const msg = "Đơn hàng đã hoàn thành. Không thể cập nhật";
+    return handleFailed(res, msg, 404);
+  } else if (order && status == 2) {
     order.status = status;
     order.save(async (err, result) => {
       if (!err) {
-        const msg = "Update order success";
+        const msg = "Cập nhật đơn hàng thành công";
         return handleSuccess(res, result, msg);
       } else {
-        const msg = "Update order failure";
+        const msg = "Có lỗi xảy ra. Vui lòng thử lại sau";
+        return handleFailed(res, msg, 500);
+      }
+    });
+  } else if (order && status == 3) {
+    order.status = status;
+    order.save(async (err, result) => {
+      if (!err) {
+        user_wallet.balance += order.amount;
+        user_wallet.save();
+        const msg = "Cập nhật đơn hàng thành công";
+        return handleSuccess(res, result, msg);
+      } else {
+        const msg = "Có lỗi xảy ra. Vui lòng thử lại sau";
+        return handleFailed(res, msg, 500);
+      }
+    });
+  } else if (order && status == 4) {
+    order.status = status;
+    order.save(async (err, result) => {
+      if (!err) {
+        idol_wallet.balance += order.amount * 0.8;
+        idol_wallet.save();
+        const msg = "Hoàn thành đơn hàng";
+        return handleSuccess(res, result, msg);
+      } else {
+        const msg = "Có lỗi xảy ra. Vui lòng thử lại sau";
         return handleFailed(res, msg, 500);
       }
     });
@@ -172,18 +200,13 @@ const getTotalOrder = (services) => {
   }
   return sum;
 };
-const flattenServices = async (order_id, user_id, data) => {
-  const user = await User.findOne({ _id: user_id });
+const flattenServices = async (order_id, data) => {
   let arr = [];
   data.map((e) => {
     e._id = ObjectId();
     arr.push({
       _id: ObjectId(),
       order_id: order_id,
-      idol_email: user.email,
-      idol_user_name: user.user_name,
-      idol_phone: user.phone,
-      idol_address: user.address,
       service_code: e.service_code,
       service_name: e.service_name,
       service_price: e.service_price,

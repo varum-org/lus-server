@@ -93,7 +93,7 @@ exports.add = async (req, res) => {
         );
         OrderDetail.insertMany(result, (err, docs) => {
           if (!err) {
-            const msg = "Order success";
+            const msg = "Thuê thành công";
             return handleSuccess(res, orderResult, msg);
           } else {
             return handleFailed(res, err, 500);
@@ -107,42 +107,52 @@ exports.add = async (req, res) => {
   }
 };
 
-
 exports.update = async (req, res) => {
   const { order_id, status } = req.body;
   const order = await Order.findOne({ _id: order_id });
-  const wallet = await Wallet.findOne({ user_id: order.user_id });
+  const user = await User.findOne({ email: order.user_email });
+  const idol_email = await OrderDetail.findOne({ order_id: order._id });
+  const idol = await User.findOne({ email: idol_email.idol_email });
+  const user_wallet = await Wallet.findOne({ user_id: user._id });
+  const idol_wallet = await Wallet.findOne({ user_id: idol._id });
 
-  if (order && status == 1) {
-    if (wallet.balance >= order.total) {
-      order.status = status;
-      order.save(async (err, result) => {
-        if (!err) {
-          wallet.balance = wallet.balance - total;
-          wallet.save();
-          const msg = "Update order success";
-          return handleSuccess(res, result, msg);
-        } else {
-          const msg = "Update order failure";
-          return handleFailed(res, msg, 500);
-        }
-      });
-    } else {
-      await Order.findOneAndDelete({ _id: order_id }, (err) => {
-        if (!err) {
-          const msg = "Customer not enough Xu. Order has been delete";
-          return handleFailed(res, msg, 500);
-        }
-      });
-    }
-  } else {
+  if (order && order.status == 4) {
+    const msg = "Đơn hàng đã hoàn thành. Không thể cập nhật";
+    return handleFailed(res, msg, 404);
+  } else if (order && status == 2) {
     order.status = status;
     order.save(async (err, result) => {
       if (!err) {
-        const msg = "Update order success";
+        const msg = "Cập nhật đơn hàng thành công";
         return handleSuccess(res, result, msg);
       } else {
-        const msg = "Update order failure";
+        const msg = "Có lỗi xảy ra. Vui lòng thử lại sau";
+        return handleFailed(res, msg, 500);
+      }
+    });
+  } else if (order && status == 3) {
+    order.status = status;
+    order.save(async (err, result) => {
+      if (!err) {
+        user_wallet.balance += order.amount;
+        user_wallet.save();
+        const msg = "Cập nhật đơn hàng thành công";
+        return handleSuccess(res, result, msg);
+      } else {
+        const msg = "Có lỗi xảy ra. Vui lòng thử lại sau";
+        return handleFailed(res, msg, 500);
+      }
+    });
+  } else if (order && status == 4) {
+    order.status = status;
+    order.save(async (err, result) => {
+      if (!err) {
+        idol_wallet.balance += order.amount * 0.8;
+        idol_wallet.save();
+        const msg = "Hoàn thành đơn hàng";
+        return handleSuccess(res, result, msg);
+      } else {
+        const msg = "Có lỗi xảy ra. Vui lòng thử lại sau";
         return handleFailed(res, msg, 500);
       }
     });

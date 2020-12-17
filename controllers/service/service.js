@@ -21,7 +21,7 @@ exports.add = async (req, res) => {
   } = req.body;
   const existService = await Service.findOne({ service_code: service_code });
   if (existService) {
-    const msg = "Service code already exists";
+    const msg = "Dịch vụ đã tồn tại";
     return handleFailed(res, msg);
   }
   const service = new Service({
@@ -33,10 +33,10 @@ exports.add = async (req, res) => {
 
   service.save((err, docs) => {
     if (err) {
-      const msg = "Something went wrong!";
+      const msg = "Có lỗi xảy ra. Vui lòng thử lại sau!";
       return handleFailed(res, msg);
     }
-    const msg = "Add service success";
+    const msg = "Thêm dịch vụ thành công";
     return handleSuccess(res, docs, msg);
   });
 };
@@ -45,16 +45,16 @@ exports.update = async (req, res) => {
   const { service_code } = req.body;
   const service = await Service.findOne({service_code:service_code});
   if (service && service._id != id) {
-    const msg = "Code already exist another service!";
+    const msg = "Mã dịch vụ đã tồn tại!";
     return handleFailed(res, msg);
   }
 
   await Service.findByIdAndUpdate({ _id: id }, req.body, (err, docs) => {
     if (err) {
-      const msg = "Something went wrong!";
+      const msg = "Có lỗi xảy ra. Vui lòng thử lại sau!";
       return handleFailed(res, msg);
     } else {
-      const msg = "update service success";
+      const msg = "Thêm dịch vụ thành công";
       return handleSuccess(res, docs, msg);
     }
   });

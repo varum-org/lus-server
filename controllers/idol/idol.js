@@ -99,11 +99,11 @@ exports.register = async (req, res) => {
       user.role_id = 2;
       user.save();
 
-      const msg = "Register Idol successfully!";
+      const msg = "Đăng ký Idol thành công!";
       return handleSuccess(res, docs, msg);
     });
   } else {
-    const msg = "User not found or User has been an Idol!";
+    const msg = "Người dùng không tồn tại hoặc đã là Idol!";
     return handleFailed(res, msg, 401);
   }
 };
@@ -149,11 +149,11 @@ exports.update = async (req, res) => {
       if (err) {
         return handleFailed(res, err);
       }
-      const msg = "Update Idol successfully!";
+      const msg = "Cập nhật Idol thành công!";
       return handleSuccess(res, docs, msg);
     });
   } else {
-    const msg = "User not found or User not an Idol!";
+    const msg = "Người dùng không tồn tại hoặc đã là Idol!";
     return handleFailed(res, msg);
   }
 };

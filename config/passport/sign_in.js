@@ -3,7 +3,6 @@ const User = require("../../models/user");
 const bcrypt = require("bcryptjs");
 
 const signIn = (passport) => {
-  console.log("SIGN IN");
   passport.use(
     "signin",
     new LocalStrategy(

@@ -65,6 +65,7 @@ const adminRoute = (passport) => {
   router.get("/banners", isAuthenticated, adminControllerBanner.list);
 
   router.get("/orders", isAuthenticated, adminControllerOrder.list);
+  router.get("/order/:id", isAuthenticated, adminControllerOrder.detail);
 
   return router;
 };

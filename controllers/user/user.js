@@ -74,7 +74,7 @@ exports.verifyEmail = async (req, res) => {
   ) {
     user.save(async (err, docs) => {
       if (!err) {
-        createWallet(docs._id);
+        await createWallet(docs._id);
 
         docs.email_active = 1;
         docs.email_code = null;

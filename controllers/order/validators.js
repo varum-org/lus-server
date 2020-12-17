@@ -4,24 +4,22 @@ const Idol = require("../../models/idol");
 const Service = require("../../models/service");
 
 module.exports = {
-  requireOrder: check("idol_id")
+  requireOrder: check("user_id")
     .trim()
     .isLength({ min: 1 })
-    .withMessage("idol_id must be a valid id")
-    .custom(async (idol_id, { req }) => {
-      const { payment_method, start_date, services } = req.body;
+    .withMessage("user_id must be a valid id")
+    .custom(async (user_id, { req }) => {
+      const { start_date, services } = req.body;
       if (
-        !idol_id.match(/^[0-9a-fA-F]{24}$/) ||
-        !idol_id.match(/^[0-9a-fA-F]{24}$/)
+        !user_id.match(/^[0-9a-fA-F]{24}$/) ||
+        !user_id.match(/^[0-9a-fA-F]{24}$/)
       ) {
         throw new Error("id not match!");
       }
       if (
-        !idol_id ||
-        !payment_method ||
+        !user_id ||
         !start_date ||
         !services ||
-        payment_method.length == 0 ||
         start_date.length == 0 ||
         services.length == 0
       ) {
@@ -29,29 +27,23 @@ module.exports = {
       }
       const token = req.header("authorization");
       const user = await User.findOne({ token: token });
-      const idol = await Idol.findOne({ _id: idol_id });
+      const idol = await Idol.findOne({ user_id: user_id });
+
       if (!user || !idol) {
         throw new Error("User or Idol not found!");
       }
-      if (payment_method != "Lus Xu") {
-        throw new Error("Payment method must be Lus Xu");
-      }
       for (const key of services) {
         const ser = await Service.findOne({
-          service_code: key.service.service_code,
-          service_name: key.service.service_name,
+          service_code: key.service_code,
+          service_name: key.service_name,
         });
         if (!ser) {
           throw new Error("services invalid format");
         }
-        if (
-          !key.service.service_code ||
-          !key.service.service_name ||
-          !key.service.service_price
-        ) {
+        if (!key.service_code || !key.service_name || !key.service_price) {
           throw new Error("services invalid format");
         }
-        if (isNaN(key.service.service_price) || key.service.service_price < 1) {
+        if (isNaN(key.service_price) || key.service_price < 1) {
           throw new Error("Service Price must be greater than 0");
         }
       }

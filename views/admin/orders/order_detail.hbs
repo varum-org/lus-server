@@ -1,0 +1,77 @@
+<div class="container">
+    <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="card-body p-0">
+            <!-- Nested Row within Card Body -->
+            <div class="text-center">
+                <h1 class="h4 text-gray-900 mt-4">CHI TIẾT ĐƠN HÀNG</h1>
+            </div>
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="p-5">
+                        <div class="form-row">
+                            <div class="col-md-12 mb-3">
+                                <label class="col-md-4 font-weight-bold">Mã đơn hàng: </label>
+                                <label>{{order._id}}</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-12 mb-3">
+                                <label class="col-md-4 font-weight-bold">Email khách hàng: </label>
+                                <label>{{order.user_email}}</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-12 mb-3">
+                                <label class="col-md-4 font-weight-bold">Tên khách hàng: </label>
+                                <label>{{order.user_name}}</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-12 mb-3">
+                                <label class="col-md-4 font-weight-bold">Số điện thoại: </label>
+                                <label>{{order.user_phone}}</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-12 mb-3">
+                                <label class="col-md-4 font-weight-bold">Trạng thái: </label>
+                                <label>{{status}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="p-5">
+                        <div class="form-row">
+                            <div class="col-md-12 mb-3">
+                                <label class="col-md-10 font-weight-bold">Hẹn hò ngày Valentine: </label>
+                                <label>150</label>
+                            </div>
+                        </div>
+                         <div class="form-row">
+                            <div class="col-md-12 mb-3">
+                                <label class="col-md-10 font-weight-bold">Ra mắt gia đình: </label>
+                                <label>50</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-12 mb-3">
+                                <label class="col-md-10 font-weight-bold">Đi chơi cùng nhau: </label>
+                                <label>30</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-12 mb-3">
+                                <label class="col-md-10 font-weight-bold">Tổng tiền: </label>
+                                <label>{{order.amount}} <i class="fas fa-heart" style="color: orange;"></i></label>
+                            </div>
+                        </div>
+                        <a href="/admin/orders" class="btn btn-info btn-user btn-block">
+                            Trở lại
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

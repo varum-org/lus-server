@@ -46,6 +46,13 @@
                             </div>
                             <div class="form-row">
                                 <div class="col-md-12 mb-4">
+                                    <label>Số xu <span style="color: red">*</span></label>
+                                    <input type="text" class="form-control" name="balance" value="{{user.balance}}"
+                                        required disabled>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12 mb-4">
                                     <label>Địa chỉ <span style="color: red">*</span></label>
                                     <input type="text" class="form-control" name="address" value="{{user.address}}"
                                         required>
@@ -64,6 +71,7 @@
                         <div class="col-md-12 mb-3">
                             <a href="https://res.cloudinary.com/employeern/image/upload/{{user.avatar}}">
                                 <img alt="picture"
+                                    onerror="this.src='https://image.freepik.com/free-vector/cute-chibi-kawaii-characters_146706-51.jpg';"
                                     src="https://res.cloudinary.com/employeern/image/upload/w_400,h_500,c_fill/{{user.avatar}}"
                                     class="img-fluid">
                             </a>

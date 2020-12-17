@@ -53,15 +53,21 @@ exports.dashboard = async (req, res) => {
 
   const totalIdol = await Idol.find().countDocuments();
   const totalOrder = await Order.find().countDocuments();
+  const total_format = new Intl.NumberFormat("vi-VN", {
+    maximumSignificantDigits: 3,
+  }).format(total.length > 0 ? total[0].amount * 1000 : 0);
+  const month_format = new Intl.NumberFormat("vi-VN", {
+    maximumSignificantDigits: 3,
+  }).format(month.length > 0 ? month[0].amount * 1000 : 0);
 
   res.render("admin/home/home.hbs", {
     layout: "admin/layouts/main.hbs",
     title: "Dashboard",
     active: { Dashboard: true },
-    totalAmount: total.length > 0 ? total[0].amount : 0,
-    monthAmount: month.length > 0 ? month[0].amount : 0,
+    totalAmount: total_format,
+    monthAmount: month_format,
     totalIdol: totalIdol,
-    totalOrder: totalOrder
+    totalOrder: totalOrder,
     //   yourname: req.user.fullname,
     //   avatar: req.user.avatar,
   });

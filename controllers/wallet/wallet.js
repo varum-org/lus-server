@@ -11,11 +11,26 @@ exports.add = async (req, res) => {
     if (wallet) {
       wallet.balance = wallet.balance + coin;
       wallet.save();
-      return res.json("Thành công");
+      return res.json({
+        success: true,
+        data: {},
+        status_code: 200,
+        messages: "Thành công",
+      });
     } else {
-      return res.json("Thất bại");
+      return res.status(500).json({
+        success: false,
+        data: {},
+        status_code: 500,
+        messages: "Thất bại",
+      });
     }
   } else {
-    return res.json("Thất bại");
+    return res.status(401).json({
+      success: false,
+      data: {},
+      status_code: 401,
+      messages: "Thất bại",
+    });
   }
 };

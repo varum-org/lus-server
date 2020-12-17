@@ -37,27 +37,9 @@
                             <td>{{this.noNum}}</td>
                             <td>OD{{this.noNum}}</td>
                             <td>{{this.user_email}}</td>
-                            {{#ifCond this.status 1}}
-                            <td style="cursor: pointer;"><span class="badge badge-info">
-                                    {{this.order_status}}</span>
-                            </td>
-                            {{else}}
-                            {{#ifCond this.status 2}}
-                            <td style="cursor: pointer;"><span class="badge badge-warning">
-                                    {{this.order_status}}</span>
-                            </td>
-                            {{else}}
-                            {{#ifCond this.status 3}}
-                            <td style="cursor: pointer;"><span class="badge badge-danger">
-                                    {{this.order_status}}</span>
-                            </td>
-                            {{else}}
                             <td style="cursor: pointer;"><span class="badge badge-success">
-                                    {{this.order_status}}</span>
+                                    Hoàn thành</span>
                             </td>
-                            {{/ifCond}}
-                            {{/ifCond}}
-                            {{/ifCond}}
                             <td>{{this.created_date}}</td>
                             <td>{{this.amount}} <i class="fas fa-heart" style="color: orange;"></i></td>
                             <td>
@@ -83,23 +65,8 @@
 
 <script src="/vendor/jquery/jquery.min.js"></script>
 <style>
-    .badge-danger {
-        color: #e23e1d !important;
-        background: #fdf0ed;
-    }
-
-    .badge-info {
-        color: #247cc6 !important;
-        background: #eef5fb;
-    }
-
     .badge-success {
         color: #1eb48e !important;
-        background: #edf9f6;
-    }
-
-    .badge-warning {
-        color: #cac60f !important;
         background: #edf9f6;
     }
 

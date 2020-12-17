@@ -9,8 +9,19 @@ const options = {
 };
 
 exports.list = async (req, res) => {
-  const orders = await Order.find().sort({ created_date: -1 });
+  const orders = await Order.find({ status: 4 }).sort({ created_date: -1 });
   const amount = await Order.aggregate([
+    {
+      $match: {
+        $and: [
+          {
+            status: {
+              $gte: 4,
+            },
+          },
+        ],
+      },
+    },
     {
       $group: {
         _id: 1,
@@ -19,22 +30,15 @@ exports.list = async (req, res) => {
     },
   ]);
 
-  res.render("admin/orders/order", {
+  res.render("admin/orders/order_success", {
     layout: "admin/layouts/main.hbs",
-    title: "Order",
+    title: "Đơn hàng thành công",
     active: { Order_All: true },
     orders: orders.map((dat, index) => ({
       ...dat.toJSON(),
       created_date: dat.created_date.toLocaleDateString("vi-VN", options),
       noNum: index + 1,
-      order_status:
-        dat.status == 1
-          ? "Chờ xác nhận"
-          : dat.status == 2
-          ? "Đã thanh toán"
-          : dat.status == 3
-          ? "Đã huỷ"
-          : "Hoàn thành",
+      order_status: "Hoàn thành",
     })),
     order_amount: amount.length > 0 ? amount[0].amount : 0,
     helpers: {

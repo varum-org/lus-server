@@ -7,6 +7,8 @@ const adminControllerUser = require("../controllers/admin/user/user");
 const adminControllerService = require("../controllers/admin/service/service");
 const adminControllerBanner = require("../controllers/admin/banner/banner");
 const adminControllerOrder = require("../controllers/admin/order/order");
+const adminControllerOrderSuccess = require("../controllers/admin/order/order_success");
+const adminControllerPhoto = require("../controllers/admin/photo/photo");
 
 const multer = require("multer");
 const upload = multer({ dest: "public/image/" });
@@ -66,6 +68,14 @@ const adminRoute = (passport) => {
 
   router.get("/orders", isAuthenticated, adminControllerOrder.list);
   router.get("/order/:id", isAuthenticated, adminControllerOrder.detail);
+
+  router.get(
+    "/orders_success",
+    isAuthenticated,
+    adminControllerOrderSuccess.list
+  );
+
+  router.get("/photos", isAuthenticated, adminControllerPhoto.list);
 
   return router;
 };

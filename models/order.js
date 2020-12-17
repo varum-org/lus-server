@@ -6,7 +6,7 @@ const OrderSchema = new mongose.Schema({
     required: true,
   },
   user_phone: {
-    type: Number,
+    type: String,
     required: true,
   },
   user_name: {
@@ -27,12 +27,12 @@ const OrderSchema = new mongose.Schema({
   },
   payment_method: {
     type: String,
-    required: true,
+    default: "Xu"
   },
   status: {
     type: Number,
     required: true,
-    default: 0,
+    default: 1,
   },
   start_date: {
     type: Date,
@@ -49,7 +49,7 @@ const OrderSchema = new mongose.Schema({
   amount: {
     type: Number,
     required: true,
-  },
+  }
 });
 
 const Order = mongose.model("Order", OrderSchema);

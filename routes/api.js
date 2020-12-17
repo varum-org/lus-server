@@ -154,7 +154,7 @@ router.post(
 );
 router.delete("/orders", verify_token, controllerOrder.delete);
 router.patch(
-  "/orders",
+  "/order",
   [requireOrderUpdate],
   handleErrors(),
   verify_token,

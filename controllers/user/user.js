@@ -23,7 +23,7 @@ exports.login = async (req, res) => {
     user.token = token;
     user.save((err, user) => {
       if (!err) {
-        const mess = "Login Successfully!";
+        const mess = "Đăng nhập thành công!";
         handleSuccess(res, user, mess);
       } else {
         handleFailed(res, err, 401);
@@ -82,14 +82,14 @@ exports.verifyEmail = async (req, res) => {
         docs.save(async (err, succ) => {
           if (!err) {
             await User.deleteMany({ email: email, email_active: 0 });
-            const mess = "Verify email success!";
+            const mess = "Xác thực email thành công!";
             return handleSuccess(res, succ, mess);
           }
         });
       }
     });
   } else {
-    const mess = "Email code has expires or invalid!";
+    const mess = "Mã xác thực hết hạn hoặc không hợp lệ!";
     return handleFailed(res, mess, 500);
   }
 };
@@ -105,7 +105,7 @@ exports.resetEmailCode = async (req, res) => {
   user.email_code_expires = Date.now() + 600000;
   user.save((err, docs) => {
     if (!err) {
-      const msg = "Your code has been reset";
+      const msg = "Mã xác thực đã được cập nhật thành công";
       return handleSuccess(res, docs, msg);
     }
     return res.json(err);
@@ -141,7 +141,7 @@ exports.userInfomation = async (req, res) => {
 
     handleGetUserSuccess(res, { user: new_user, idol: idol }, mess);
   } else {
-    const mess = "User not found!";
+    const mess = "Không tìm thấy người dùng!";
     handleFailed(res, mess, 401);
   }
 };

@@ -17,6 +17,30 @@ const OrderSchema = new mongose.Schema({
     type: String,
     default: "",
   },
+  user_image: {
+    type: String,
+    default: "",
+  },
+  idol_email: {
+    type: String,
+    required: true,
+  },
+  idol_user_name: {
+    type: String,
+    required: true,
+  },
+  idol_phone: {
+    type: String,
+    required: true,
+  },
+  idol_address: {
+    type: String,
+    default: "",
+  },
+  idol_image: {
+    type: String,
+    default: "",
+  },
   coupon: {
     type: String,
     default: "",
@@ -27,7 +51,7 @@ const OrderSchema = new mongose.Schema({
   },
   payment_method: {
     type: String,
-    default: "Xu"
+    default: "Xu",
   },
   status: {
     type: Number,
@@ -49,7 +73,7 @@ const OrderSchema = new mongose.Schema({
   amount: {
     type: Number,
     required: true,
-  }
+  },
 });
 
 const Order = mongose.model("Order", OrderSchema);

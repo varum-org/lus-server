@@ -144,7 +144,7 @@ router.delete(
 
 // Order -------------------------
 router.get("/orders", verify_token, controllerOrder.list);
-router.get("/idol/orders", verify_token, controllerOrder.list_for_idol);
+router.get("/idols/orders", verify_token, controllerOrder.list_order_idol);
 router.post(
   "/user/order",
   verify_token,

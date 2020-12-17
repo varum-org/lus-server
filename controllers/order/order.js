@@ -4,6 +4,7 @@ const Wallet = require("../../models/wallet");
 const User = require("../../models/user");
 const { handleSuccess, handleFailed, handleList } = require("./middleware");
 const mongoose = require("mongoose");
+const Idol = require("../../models/idol");
 const ObjectId = mongoose.Types.ObjectId;
 
 exports.list = async (req, res) => {
@@ -53,14 +54,26 @@ exports.list = async (req, res) => {
   }
 };
 
-exports.list_for_idol = async (req, res) => {
+exports.list_order_idol = async (req, res) => {
+  const { status } = req.query;
   const token = req.header("authorization");
   const user = await User.findOne({ token: token });
+  if (user) {
+    const list_orders = await Order.find({
+      user_email: user.email,
+      status: status,
+    }).limit(10);
 
-  const list_orders = await Order.find({ idol_id: user._id });
-  if (list_orders) {
-    const msg = "Get list rent me success";
-    return handleList(res, list_orders, msg);
+    if (list_orders) {
+      const msg = "Get list rent me success";
+      return handleList(res, list_orders, msg);
+    } else {
+      const msg = "Có lỗi xảy ra. Vui lòng thử lại sau";
+      return handleFailed(res, msg, 500);
+    }
+  } else {
+    const msg = "Có lỗi xảy ra. Vui lòng thử lại sau";
+    return handleFailed(res, msg, 401);
   }
 };
 
@@ -68,6 +81,8 @@ exports.add = async (req, res) => {
   const { user_id, start_date, note, services } = req.body;
   const token = req.header("authorization");
   const user = await User.findOne({ token: token });
+  const idol = await User.findOne({ _id: user_id });
+  const idol_ = await Idol.findOne({ user_id: idol._id });
   const wallet = await Wallet.findOne({ user_id: user._id });
 
   if (wallet.balance >= getTotalOrder(services)) {
@@ -78,6 +93,12 @@ exports.add = async (req, res) => {
       user_phone: user.phone,
       user_name: user.user_name,
       user_address: user.address ? user.address : "",
+      user_image: user.image_path,
+      idol_email: idol.email,
+      idol_user_name: idol.user_name,
+      idol_phone: idol.phone,
+      idol_address: idol.address,
+      idol_image: idol_.image_gallery[0],
       payment_method: "Xu",
       amount: getTotalOrder(services),
       status: 1,
@@ -86,11 +107,7 @@ exports.add = async (req, res) => {
     });
     order.save(async (err, orderResult) => {
       if (!err) {
-        const result = await flattenServices(
-          orderResult._id,
-          user_id,
-          services
-        );
+        const result = await flattenServices(orderResult._id, services);
         OrderDetail.insertMany(result, (err, docs) => {
           if (!err) {
             const msg = "Thuê thành công";
@@ -110,9 +127,10 @@ exports.add = async (req, res) => {
 exports.update = async (req, res) => {
   const { order_id, status } = req.body;
   const order = await Order.findOne({ _id: order_id });
+
   const user = await User.findOne({ email: order.user_email });
-  const idol_email = await OrderDetail.findOne({ order_id: order._id });
-  const idol = await User.findOne({ email: idol_email.idol_email });
+  const idol = await User.findOne({ email: order.idol_email });
+
   const user_wallet = await Wallet.findOne({ user_id: user._id });
   const idol_wallet = await Wallet.findOne({ user_id: idol._id });
 
@@ -182,18 +200,13 @@ const getTotalOrder = (services) => {
   }
   return sum;
 };
-const flattenServices = async (order_id, user_id, data) => {
-  const user = await User.findOne({ _id: user_id });
+const flattenServices = async (order_id, data) => {
   let arr = [];
   data.map((e) => {
     e._id = ObjectId();
     arr.push({
       _id: ObjectId(),
       order_id: order_id,
-      idol_email: user.email,
-      idol_user_name: user.user_name,
-      idol_phone: user.phone,
-      idol_address: user.address,
       service_code: e.service_code,
       service_name: e.service_name,
       service_price: e.service_price,

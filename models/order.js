@@ -15,13 +15,15 @@ const OrderSchema = new mongose.Schema({
   },
   user_address: {
     type: String,
-    required: true,
+    default: "",
   },
   coupon: {
     type: String,
+    default: "",
   },
   discount: {
     type: Number,
+    default: 0,
   },
   payment_method: {
     type: String,
@@ -42,6 +44,7 @@ const OrderSchema = new mongose.Schema({
   },
   note: {
     type: String,
+    default: "",
   },
 });
 

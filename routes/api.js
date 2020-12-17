@@ -7,6 +7,7 @@ const controllerCart = require("../controllers/favorite/favorite");
 const controllerOrder = require("../controllers/order/order");
 const controllerService = require("../controllers/service/service");
 const controllerLike = require("../controllers/like/like");
+const controllerWallet = require("../controllers/wallet/wallet");
 const {
   requireEmailLogin,
   requirePasswordLogin,
@@ -74,9 +75,8 @@ router.post(
   controllerApiUser.resetEmailCode
 );
 router.get(
-  "/user/:id",
+  "/user",
   verify_token,
-  [requireId],
   handleErrors(),
   controllerApiUser.userInfomation
 );
@@ -168,3 +168,6 @@ router.patch("/service/:id", controllerService.update);
 
 // Like -------------------------
 router.get("/like", verify_token, controllerLike.like);
+
+// Wallet
+router.post("/wallet", verify_token, controllerWallet.add);

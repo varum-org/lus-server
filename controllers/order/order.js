@@ -4,7 +4,6 @@ const Wallet = require("../../models/wallet");
 const User = require("../../models/user");
 const { handleSuccess, handleFailed, handleList } = require("./middleware");
 const mongoose = require("mongoose");
-const Idol = require("../../models/idol");
 const ObjectId = mongoose.Types.ObjectId;
 
 exports.list = async (req, res) => {

@@ -46,6 +46,10 @@ const OrderSchema = new mongose.Schema({
     type: String,
     default: "",
   },
+  amount: {
+    type: Number,
+    required: true,
+  },
 });
 
 const Order = mongose.model("Order", OrderSchema);

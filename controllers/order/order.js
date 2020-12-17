@@ -20,7 +20,7 @@ exports.list = async (req, res) => {
     }
   } else if (status == "pending") {
     for (const key of orders) {
-      if (key.status == 0) {
+      if (key.status == 1) {
         newOrders.push(key);
       }
     }
@@ -28,7 +28,7 @@ exports.list = async (req, res) => {
     return handleList(res, newOrders, msg);
   } else if (status == "approve") {
     for (const key of orders) {
-      if (key.status == 1) {
+      if (key.status == 2) {
         newOrders.push(key);
       }
     }
@@ -36,7 +36,7 @@ exports.list = async (req, res) => {
     return handleList(res, newOrders, msg);
   } else if (status == "reject") {
     for (const key of orders) {
-      if (key.status == 2) {
+      if (key.status == 3) {
         newOrders.push(key);
       }
     }
@@ -44,7 +44,7 @@ exports.list = async (req, res) => {
     return handleList(res, newOrders, msg);
   } else if (status == "finish") {
     for (const key of orders) {
-      if (key.status == 3) {
+      if (key.status == 4) {
         newOrders.push(key);
       }
     }
@@ -77,7 +77,7 @@ exports.add = async (req, res) => {
       user_email: user.email,
       user_phone: user.phone,
       user_name: user.user_name,
-      user_address: user.address,
+      user_address: user.address ? user.address : "",
       payment_method: "Xu",
       amount: getTotalOrder(services),
       status: 1,
@@ -107,21 +107,6 @@ exports.add = async (req, res) => {
   }
 };
 
-exports.delete = async (req, res) => {
-  const { order_id } = req.body;
-  const order = await Order.findOne({ _id: order_id });
-  if (order && order.status == 0) {
-    await Order.findOneAndDelete({ _id: order_id }, (err, result) => {
-      if (!err) {
-        const msg = "Delete order success";
-        return handleSuccess(res, result, msg);
-      }
-    });
-  } else {
-    const msg = "Delete order failure";
-    return handleFailed(res, msg, 500);
-  }
-};
 
 exports.update = async (req, res) => {
   const { order_id, status } = req.body;
@@ -161,6 +146,22 @@ exports.update = async (req, res) => {
         return handleFailed(res, msg, 500);
       }
     });
+  }
+};
+
+exports.delete = async (req, res) => {
+  const { order_id } = req.body;
+  const order = await Order.findOne({ _id: order_id });
+  if (order && order.status == 0) {
+    await Order.findOneAndDelete({ _id: order_id }, (err, result) => {
+      if (!err) {
+        const msg = "Delete order success";
+        return handleSuccess(res, result, msg);
+      }
+    });
+  } else {
+    const msg = "Delete order failure";
+    return handleFailed(res, msg, 500);
   }
 };
 

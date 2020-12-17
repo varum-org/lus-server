@@ -40,10 +40,6 @@ const OrderSchema = new mongose.Schema({
     type: Date,
     default: Date.now(),
   },
-  amount: {
-    type: Number,
-    required: true
-  },
   note: {
     type: String,
   },

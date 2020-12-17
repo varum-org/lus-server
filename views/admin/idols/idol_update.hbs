@@ -86,7 +86,17 @@
                         </form>
                     </div>
                 </div>
-                <div class="col-lg-5 d-none d-lg-block">
+                <div class="col-lg-5 d-none d-lg-block mt-5 p-5">
+                    {{#each idol.services}}
+                    <div class="form-row mr-3">
+                        <div class="col-md-12 mb-3">
+                            <label>{{this.service_name}} <span style="color: red">*</span> </label>
+                            <input type="text" class="form-control" name="relationship"
+                                value="{{this.service_price}} Xu" required disabled>
+                        </div>
+                    </div>
+                    {{/each}}
+
                     <div class="row mt-4 mb-3 mr-2">
                         <div id="mdb-lightbox-ui"></div>
                         {{#each images}}

@@ -67,7 +67,7 @@ exports.detail = async (req, res) => {
   res.render("admin/orders/order_detail", {
     layout: "admin/layouts/main.hbs",
     title: "Chi tiết đơn hàng",
-    active: { Order_All: true },
+    active: { Order_success: true },
     order: order.toJSON(),
     order_detail: order_detail.map((dat, index) => ({
       ...dat.toJSON(),

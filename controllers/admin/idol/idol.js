@@ -195,6 +195,7 @@ exports.detail = async (req, res) => {
         user_name: user.user_name,
         phone: user.phone,
         gender: user.gender == 0 ? "Khác" : user.gender == 1 ? "Nam" : "Nữ",
+        services: data.services,
       };
 
       res.render("admin/idols/idol_update.hbs", {
@@ -202,7 +203,6 @@ exports.detail = async (req, res) => {
         title: "Idol Detail",
         active: { Idol: true },
         idol: idol,
-        services: data.services,
         images: data.image_gallery,
       });
     }

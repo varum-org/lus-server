@@ -135,9 +135,22 @@ exports.userInfomation = async (req, res) => {
   if (user) {
     const mess = "Get information successfully";
     let idol = await Idol.findOne({ user_id: user._id });
-    handleGetUserSuccess(res, { user: user, idol: idol }, mess);
+    const wallet = await getWallet(user._id);
+    const new_user = { ...user._doc };
+    new_user.wallet = wallet;
+
+    handleGetUserSuccess(res, { user: new_user, idol: idol }, mess);
   } else {
     const mess = "User not found!";
     handleFailed(res, mess, 401);
+  }
+};
+
+const getWallet = async (user_id) => {
+  const wallet = await Wallet.findOne({ user_id: user_id });
+  if (wallet) {
+    return wallet.balance;
+  } else {
+    return 0;
   }
 };

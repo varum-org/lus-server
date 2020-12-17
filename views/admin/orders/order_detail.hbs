@@ -35,39 +35,30 @@
                         <div class="form-row">
                             <div class="col-md-12 mb-3">
                                 <label class="col-md-4 font-weight-bold">Trạng thái: </label>
-                                <label>{{status}}</label>
+                                <label style="cursor: pointer;"><span class="badge badge-info">
+                                        {{status}}</span></label>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-5">
                     <div class="p-5">
+                        {{#each order_detail}}
                         <div class="form-row">
                             <div class="col-md-12 mb-3">
-                                <label class="col-md-10 font-weight-bold">Hẹn hò ngày Valentine: </label>
-                                <label>150</label>
+                                <label class="col-md-9 font-weight-bold">{{this.service_name}}: </label>
+                                <label>{{this.service_price}} x {{this.hour}}</label>
                             </div>
                         </div>
-                         <div class="form-row">
-                            <div class="col-md-12 mb-3">
-                                <label class="col-md-10 font-weight-bold">Ra mắt gia đình: </label>
-                                <label>50</label>
-                            </div>
-                        </div>
+                        {{/each}}
                         <div class="form-row">
                             <div class="col-md-12 mb-3">
-                                <label class="col-md-10 font-weight-bold">Đi chơi cùng nhau: </label>
-                                <label>30</label>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="col-md-12 mb-3">
-                                <label class="col-md-10 font-weight-bold">Tổng tiền: </label>
+                                <label class="col-md-9 font-weight-bold">Tổng tiền: </label>
                                 <label>{{order.amount}} <i class="fas fa-heart" style="color: orange;"></i></label>
                             </div>
                         </div>
                         <a href="/admin/orders" class="btn btn-info btn-user btn-block">
-                            Trở lại
+                            Xác nhận
                         </a>
                     </div>
                 </div>
@@ -75,3 +66,21 @@
         </div>
     </div>
 </div>
+
+<style>
+    .badge-info {
+        color: #247cc6 !important;
+        background: #eef5fb;
+    }
+
+    .badge {
+        font-size: 14px;
+        font-weight: 400;
+        min-width: 120px;
+        width: 140px;
+        height: 30px;
+        padding: 10px 8px;
+        text-align: center;
+        border-radius: 20px;
+    }
+</style>

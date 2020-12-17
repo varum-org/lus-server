@@ -7,15 +7,15 @@ const OrderDetailSchema = new mongose.Schema({
   },
   idol_email: {
     type: String,
-    required: true
+    required: true,
   },
   idol_user_name: {
     type: String,
-    required: true
+    required: true,
   },
   idol_phone: {
     type: String,
-    required: true
+    required: true,
   },
   idol_address: {
     type: String,
@@ -24,14 +24,17 @@ const OrderDetailSchema = new mongose.Schema({
     type: Number,
     required: true,
   },
+  service_name: {
+    type: String,
+  },
   service_price: {
     type: Number,
     required: true,
   },
   hour: {
     type: Number,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const OrderDetail = mongose.model("OrderDetail", OrderDetailSchema);

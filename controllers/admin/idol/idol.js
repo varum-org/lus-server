@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 
 const cloudinary = require("../../../config/cloudinary");
 const fs = require("fs");
+const Service = require("../../../models/service");
 
 const options = {
   weekday: "long",
@@ -25,7 +26,7 @@ exports.list = async (req, res) => {
       name: idols[index].nick_name,
       birthday: user.birthday
         ? user.birthday.toLocaleDateString("vi-VN", options)
-        : "Chưa cập nhật",
+        : "01/01/2000",
       address: idols[index].address,
       rating: idols[index].rating,
       status: idols[index].status,
@@ -55,10 +56,15 @@ exports.list = async (req, res) => {
 };
 
 exports.getCreate = async (req, res) => {
+  const services = await Service.find();
   return res.render("admin/idols/idol_create.hbs", {
     layout: "admin/layouts/main.hbs",
     title: "Đăng ký Idol",
     active: { Idol: true },
+    services: services.map((dat, index) => ({
+      ...dat.toJSON(),
+      noNum: index + 1,
+    })),
   });
 };
 
@@ -77,7 +83,7 @@ exports.create = async (req, res) => {
     nick_name,
     relationship,
     description,
-    // services,
+    services_price,
   } = req.body;
 
   const user_exist = await User.findOne({ email: email });
@@ -86,7 +92,7 @@ exports.create = async (req, res) => {
       layout: "admin/layouts/main.hbs",
       title: "Đăng ký Idol",
       active: { Idol: true },
-      message: req.flash("message", "Mật khẩu không khớp")
+      message: req.flash("message", "Mật khẩu không khớp"),
     });
   }
   if (user_exist) {
@@ -131,7 +137,18 @@ exports.create = async (req, res) => {
           address: address,
           image_path: urls[0],
         });
-        user.save((err) => {
+        user.save(async (err) => {
+          await createWallet(user._id);
+          const services_data = await Service.find();
+          const services = [];
+          for (const key in services_price) {
+            const item = {
+              service_code: services_data[key].service_code,
+              service_name: services_data[key].service_name,
+              service_price: services_price[key],
+            };
+            services.push(item);
+          }
           if (!err) {
             const idol = new Idol({
               user_id: user._id,
@@ -140,7 +157,7 @@ exports.create = async (req, res) => {
               relationship: relationship,
               description: description,
               image_gallery: urls,
-              // services: services
+              services: services,
             });
             idol.save((err) => {
               if (!err) {
@@ -165,7 +182,9 @@ exports.detail = async (req, res) => {
       const idol = {
         id: data.user_id,
         email: user.email,
-        birthday: user.birthday.toLocaleString().split(",")[0],
+        birthday: user.birthday
+          ? user.birthday.toLocaleString().split(",")[0]
+          : "01/01/2000",
         nick_name: data.nick_name,
         address: data.address,
         relationship: data.relationship,
@@ -250,4 +269,12 @@ exports.delete = async (req, res) => {
       });
     }
   });
+};
+
+const createWallet = async (user_id) => {
+  const user_wallet = new Wallet({
+    user_id: user_id,
+    balance: 0,
+  });
+  user_wallet.save();
 };

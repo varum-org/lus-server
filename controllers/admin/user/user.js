@@ -1,5 +1,6 @@
 const User = require("../../../models/user");
 const Idol = require("../../../models/idol");
+const Wallet = require("../../../models/wallet");
 
 const options = {
   weekday: "long",
@@ -45,16 +46,20 @@ exports.list = async (req, res) => {
 
 exports.detail = async (req, res) => {
   const id = req.params.id;
+  // console.log(getWallet(id));
   const user = await User.findOne({ _id: id });
   const userData = {
     id: user._id,
     email: user.email,
-    birthday: user.birthday.toLocaleString().split(",")[0],
+    birthday: user.birthday
+      ? user.birthday.toLocaleString().split(",")[0]
+      : "01/01/2000",
     avatar: user.image_path,
     user_name: user.user_name,
-    address: user.address,
+    address: user.address ? user.address : "Chưa cập nhật",
     phone: user.phone,
     gender: user.gender == 0 ? "Khác" : user.gender == 1 ? "Nam" : "Nữ",
+    balance: await getWallet(id),
   };
 
   res.render("admin/users/user_update.hbs", {
@@ -67,7 +72,7 @@ exports.detail = async (req, res) => {
 
 exports.update = async (req, res) => {
   const id = req.params.id;
-  const { phone, birthday, address, gender, user_name } = req.body;
+  const { phone, birthday, address, gender, user_name, balance } = req.body;
 
   let gender_parse = gender == "Khác" ? 0 : gender == "Nam" ? 1 : 2;
   const user = await User.findOneAndUpdate(
@@ -80,9 +85,19 @@ exports.update = async (req, res) => {
       gender: gender_parse,
     }
   );
-  user.save((err) => {
+  user.save(async (err) => {
     if (!err) {
-      return res.redirect("/admin/users");
+      const wallet = await Wallet.findOne({ user_id: id });
+      if (wallet) {
+        wallet.balance = balance;
+        wallet.save((err) => {
+          return res.redirect("/admin/users");
+        });
+      } else {
+        await createWallet(user.id, balance);
+
+        return res.redirect("/admin/users");
+      }
     } else {
       return res.send(err);
     }
@@ -94,11 +109,29 @@ exports.delete = async (req, res) => {
   const id = req.body.id;
   await User.findOneAndDelete({ _id: id }, async (err) => {
     if (!err) {
-      await Idol.findOneAndDelete({ user_id: id }, (err) => {
+      await Idol.findOneAndDelete({ user_id: id }, async (err) => {
         if (!err) {
+          await Wallet.findOneAndDelete({ user_id: id });
           return res.send(url);
         }
       });
     }
   });
+};
+
+const getWallet = async (id) => {
+  const user_wallet = await Wallet.findOne({ user_id: id });
+  if (user_wallet) {
+    return user_wallet.balance;
+  } else {
+    return 0;
+  }
+};
+
+const createWallet = async (user_id, balance) => {
+  const user_wallet = new Wallet({
+    user_id: user_id,
+    balance: balance,
+  });
+  user_wallet.save();
 };

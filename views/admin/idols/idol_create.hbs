@@ -77,21 +77,37 @@
                                     <textarea class="form-control" name="description" rows="3"></textarea>
                                 </div>
                             </div>
-
+                            <div class="col-md-12 mb-3 mt-3">
+                                <input class="btn btn-primary btn-user btn-block" type="submit" value="Đăng ký">
+                                <a href="/admin/idols" class="btn btn-google btn-user btn-block">
+                                    Trở lại
+                                </a>
+                            </div>
                         </div>
                     </div>
+
                     <div class="col-lg-5 d-none d-lg-block">
-                        <div class="col-md-6 mb-3 mt-5">
+                        <div class="form-row mt-3">
+                            <div class="col-md-12 mt-5">
+                                <label for="description">DỊCH VỤ (Xu)</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            {{#each services}}
+                            <div class="form-row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="description">{{this.service_name}} <span
+                                            style="color: red">*</span></label>
+                                    <input type="number" class="form-control" name="services_price" required />
+                                </div>
+                            </div>
+                            {{/each}}
+                        </div>
+                        <div class="col-md-6 mb-3">
                             <label for="validationServer02">Thêm ảnh <span style="color: red">*</span></label>
                             <input type="file" name="image_gallery" multiple required id="gallery-photo-add">
                         </div>
                         <div class="row mt-3 mb-3 mr-2 gallery">
-                        </div>
-                        <div class="col-md-12 mb-3 mt-3">
-                            <input class="btn btn-primary btn-user btn-block" type="submit" value="Đăng ký">
-                            <a href="/admin/idols" class="btn btn-google btn-user btn-block">
-                                Trở lại
-                            </a>
                         </div>
                     </div>
                 </div>

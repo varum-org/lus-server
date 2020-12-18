@@ -7,50 +7,73 @@ const mongoose = require("mongoose");
 const Idol = require("../../models/idol");
 const ObjectId = mongoose.Types.ObjectId;
 
+// exports.list = async (req, res) => {
+//   const { status } = req.query;
+//   const token = req.header("authorization");
+//   const user = await User.findOne({ token: token });
+
+//   const orders = await Order.find({ user_id: user._id });
+//   const newOrders = [];
+//   if (!status) {
+//     if (orders) {
+//       const msg = "Get list orders success";
+//       return handleList(res, orders, msg);
+//     }
+//   } else if (status == "pending") {
+//     for (const key of orders) {
+//       if (key.status == 1) {
+//         newOrders.push(key);
+//       }
+//     }
+//     const msg = "Get list pending orders success";
+//     return handleList(res, newOrders, msg);
+//   } else if (status == "approve") {
+//     for (const key of orders) {
+//       if (key.status == 2) {
+//         newOrders.push(key);
+//       }
+//     }
+//     const msg = "Get list approve orders success";
+//     return handleList(res, newOrders, msg);
+//   } else if (status == "reject") {
+//     for (const key of orders) {
+//       if (key.status == 3) {
+//         newOrders.push(key);
+//       }
+//     }
+//     const msg = "Get list reject orders success";
+//     return handleList(res, newOrders, msg);
+//   } else if (status == "finish") {
+//     for (const key of orders) {
+//       if (key.status == 4) {
+//         newOrders.push(key);
+//       }
+//     }
+//     const msg = "Get list finish orders success";
+//     return handleList(res, newOrders, msg);
+//   }
+// };
+
 exports.list = async (req, res) => {
   const { status } = req.query;
   const token = req.header("authorization");
   const user = await User.findOne({ token: token });
+  if (user) {
+    const list_orders = await Order.find({
+      idol_email: user.email,
+      status: status,
+    }).limit(10);
 
-  const orders = await Order.find({ user_id: user._id });
-  const newOrders = [];
-  if (!status) {
-    if (orders) {
-      const msg = "Get list orders success";
-      return handleList(res, orders, msg);
+    if (list_orders) {
+      const msg = "Get list rent me success";
+      return handleList(res, list_orders, msg);
+    } else {
+      const msg = "Có lỗi xảy ra. Vui lòng thử lại sau";
+      return handleFailed(res, msg, 500);
     }
-  } else if (status == "pending") {
-    for (const key of orders) {
-      if (key.status == 1) {
-        newOrders.push(key);
-      }
-    }
-    const msg = "Get list pending orders success";
-    return handleList(res, newOrders, msg);
-  } else if (status == "approve") {
-    for (const key of orders) {
-      if (key.status == 2) {
-        newOrders.push(key);
-      }
-    }
-    const msg = "Get list approve orders success";
-    return handleList(res, newOrders, msg);
-  } else if (status == "reject") {
-    for (const key of orders) {
-      if (key.status == 3) {
-        newOrders.push(key);
-      }
-    }
-    const msg = "Get list reject orders success";
-    return handleList(res, newOrders, msg);
-  } else if (status == "finish") {
-    for (const key of orders) {
-      if (key.status == 4) {
-        newOrders.push(key);
-      }
-    }
-    const msg = "Get list finish orders success";
-    return handleList(res, newOrders, msg);
+  } else {
+    const msg = "Có lỗi xảy ra. Vui lòng thử lại sau";
+    return handleFailed(res, msg, 401);
   }
 };
 

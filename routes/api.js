@@ -152,7 +152,7 @@ router.post(
   handleErrors(),
   controllerOrder.add
 );
-router.delete("/orders", verify_token, controllerOrder.delete);
+router.delete("/orders/:order_id", verify_token, controllerOrder.delete);
 router.patch(
   "/order",
   [requireOrderUpdate],

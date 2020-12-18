@@ -201,7 +201,7 @@ exports.update = async (req, res) => {
 };
 
 exports.delete = async (req, res) => {
-  const { order_id } = req.body;
+  const { order_id } = req.params;
   const order = await Order.findOne({ _id: order_id });
   if (order && order.status == 1) {
     await Order.findOneAndDelete({ _id: order_id }, (err, result) => {

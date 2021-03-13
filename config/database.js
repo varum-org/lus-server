@@ -1,4 +1,3 @@
 module.exports = {
-  mongoURI:
-    "mongodb+srv://tranquocviet226:khoqua226@mydb-unmzm.mongodb.net/lovely?retryWrites=true&w=majority",
+  mongoURI: process.env.MONGODB_URI,
 };

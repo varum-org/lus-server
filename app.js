@@ -232,7 +232,7 @@ app.use("/api/v1", require("./routes/api.js"));
 app.use("/admin", adminRoute(passport));
 
 // Swagger
-const swaggerDocument = YAML.load("./docs/api-docs.yml");
+const swaggerDocument = YAML.load(path.join(__dirname, "docs/api-docs.yml"));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Setup a default catch-all route that sends back a welcome message in JSON format.
